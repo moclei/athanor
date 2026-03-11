@@ -54,8 +54,8 @@
 # --- handoff point ---
 
 ## Phase 8: Recipe and BLOCKS.md
-- [ ] Write `recipes/minimal-react/README.md` — step-by-step wiring guide for iframe-mount + basic SW + typed-messages + react UI
-- [ ] Write `docs/BLOCKS.md` — one entry per block: path, purpose, one-line description, link to BLOCK.md
+- [x] Write `recipes/minimal-react/README.md` — step-by-step wiring guide for iframe-mount + basic SW + typed-messages + react UI
+- [x] Write `docs/BLOCKS.md` — one entry per block: path, purpose, one-line description, link to BLOCK.md
 
 ## Phase 9: hello-world PoC
 - [ ] Create `workspace/hello-world/` — copy in selected blocks
