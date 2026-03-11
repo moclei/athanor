@@ -1,0 +1,10 @@
+{
+  "name": "athanor",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "echo 'Run build from within a workspace extension directory'",
+    "typecheck": "tsc --noEmit",
+    "lint": "echo 'Add a linter when blocks are in place'"
+  }
+}

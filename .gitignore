@@ -1,0 +1,11 @@
+# Workspace extensions are gitignored — each is a standalone local artifact
+workspace/
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# macOS
+.DS_Store
