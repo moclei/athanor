@@ -58,12 +58,12 @@
 - [x] Write `docs/BLOCKS.md` — one entry per block: path, purpose, one-line description, link to BLOCK.md
 
 ## Phase 9: hello-world PoC
-- [ ] Create `workspace/hello-world/` — copy in selected blocks
-- [ ] Wire up: content script mounts iframe → UI button sends `FETCH_DATA` → SW fetches dog API → `DATA_RESPONSE` → UI displays image
-- [ ] Fill in `manifest.json` from base template
+- [x] Create `workspace/hello-world/` — copy in selected blocks
+- [x] Wire up: content script mounts iframe → UI button sends `FETCH_DATA` → SW fetches dog API → `DATA_RESPONSE` → UI displays image
+- [x] Fill in `manifest.json` from base template
 - [ ] Load as unpacked extension in Chrome; verify no console errors
 - [ ] Verify full round-trip: icon click → iframe opens → button click → image appears
-- [ ] Commit all library work (not workspace — it's gitignored); tag `v0.1.0-foundation`
+- [x] Commit all library work (not workspace — it's gitignored); tag `v0.1.0-foundation`
 
 ## Deferred
 - `blocks/content-script/shadow-dom-mount/` — listed in AI.md catalog but not in scope for foundation; marked in catalog as "not yet implemented; deferred"
