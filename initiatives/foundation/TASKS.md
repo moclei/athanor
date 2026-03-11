@@ -47,9 +47,9 @@
 - [x] Add `BLOCK.md` — exports, integration notes, build instructions, required manifest fields (`web_accessible_resources`)
 
 ## Phase 7: Manifest Template
-- [ ] Create `blocks/manifest/templates/base/` — `BLOCK.md`, `manifest.json`
-- [ ] `manifest.json` includes all required MV3 fields with placeholder values and inline comments marking what to fill in
-- [ ] `BLOCK.md` documents every field, why it's there, and what to add for common permission patterns
+- [x] Create `blocks/manifest/templates/base/` — `BLOCK.md`, `manifest.json`
+- [x] `manifest.json` includes all required MV3 fields with placeholder values and inline comments marking what to fill in
+- [x] `BLOCK.md` documents every field, why it's there, and what to add for common permission patterns
 
 # --- handoff point ---
 
