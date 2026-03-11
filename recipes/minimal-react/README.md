@@ -43,6 +43,7 @@ After `vite build`, the output lands in `dist/`:
 
 ```
 dist/
+├── manifest.json                 ← copied from workspace root at build time
 ├── background.js                 ← compiled service worker
 ├── content-script/
 │   └── index.js                  ← compiled content script
@@ -52,7 +53,7 @@ dist/
         └── index.js
 ```
 
-The manifest references paths inside `dist/`.
+`manifest.json` lives at the workspace root as source and is copied into `dist/` during the build. All paths in the manifest (`background.js`, `content-script/index.js`, `ui/*`) are relative to the manifest's location — so they resolve correctly from inside `dist/`. Chrome loads the extension from `dist/`.
 
 ---
 
@@ -180,12 +181,25 @@ export default defineConfig({
 })
 ```
 
-Create `workspace/<extension-name>/vite.config.scripts.ts` for the content script and service worker:
+Create `workspace/<extension-name>/vite.config.scripts.ts` for the content script, service worker, and manifest copy:
 
 ```ts
 import { defineConfig } from 'vite'
+import { copyFileSync } from 'fs'
+import { resolve } from 'path'
+
+const copyManifest = {
+  name: 'copy-manifest',
+  closeBundle() {
+    copyFileSync(
+      resolve(__dirname, 'manifest.json'),
+      resolve(__dirname, 'dist/manifest.json'),
+    )
+  },
+}
 
 export default defineConfig({
+  plugins: [copyManifest],
   build: {
     outDir: 'dist',
     emptyOutDir: false,            // do not wipe the ui/ output from the first build
@@ -202,6 +216,8 @@ export default defineConfig({
   },
 })
 ```
+
+This config runs second (after the UI build) so `emptyOutDir: false` preserves the `dist/ui/` output. The `copyManifest` plugin runs after the bundle is written and copies `manifest.json` from the workspace root into `dist/`.
 
 Update the `build` script in `package.json` to run both configs:
 
