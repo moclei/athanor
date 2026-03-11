@@ -31,11 +31,11 @@
 - [x] Add `BLOCK.md` — exports, integration notes, required manifest fields (`content_scripts`, `action` without `default_popup`)
 
 ## Phase 5: Service Worker Block
-- [ ] Create `blocks/service-worker/basic/` — `BLOCK.md`, `index.ts`
-- [ ] Implement `chrome.runtime.onMessage` listener routing on `ExtensionMessage.type`
-- [ ] Implement `FETCH_DATA` handler — fetch URL from payload, return `DATA_RESPONSE` or `ERROR`
-- [ ] Handle `return true` correctly for async `sendResponse`
-- [ ] Add `BLOCK.md` — exports, integration notes, required manifest fields (`background.service_worker`)
+- [x] Create `blocks/service-worker/basic/` — `BLOCK.md`, `index.ts`
+- [x] Implement `chrome.runtime.onMessage` listener routing on `ExtensionMessage.type`
+- [x] Implement `FETCH_DATA` handler — fetch URL from payload, return `DATA_RESPONSE` or `ERROR`
+- [x] Handle `return true` correctly for async `sendResponse`
+- [x] Add `BLOCK.md` — exports, integration notes, required manifest fields (`background.service_worker`)
 
 # --- handoff point ---
 
