@@ -26,7 +26,7 @@ These are non-negotiable. Do not deviate.
 - **No default popup.** The extension UI is always mounted by the content script, either via iframe or Shadow DOM. The `default_popup` key must not appear in the manifest.
 - **All network requests go through the service worker.** The content script never fetches directly.
 - **All messages are typed.** Use the typed messaging block. Never pass untyped objects through `chrome.runtime.sendMessage`.
-- **No shared runtime state between blocks** unless the Crann state-sync block is explicitly included.
+- **No shared runtime state between blocks** unless the Crann state-sync block is explicitly included. (Crann blocks are not yet implemented — deferred to a later phase.)
 
 ---
 
@@ -44,28 +44,28 @@ Each block lives at `blocks/<category>/<variant>/`. Every block contains:
 | Variant | Path | Use when |
 |---|---|---|
 | `iframe-mount` | `blocks/content-script/iframe-mount/` | You need a persistent, styled UI injected into the page |
-| `shadow-dom-mount` | `blocks/content-script/shadow-dom-mount/` | You need style encapsulation without a separate browsing context |
+| `shadow-dom-mount` | `blocks/content-script/shadow-dom-mount/` | You need style encapsulation without a separate browsing context — **not yet implemented; deferred** |
 
 ### Service Worker
 
 | Variant | Path | Use when |
 |---|---|---|
 | `basic` | `blocks/service-worker/basic/` | Standard fetch handling, no persistent state |
-| `with-crann` | `blocks/service-worker/with-crann/` | State needs to be synced between service worker and content script |
+| `with-crann` | `blocks/service-worker/with-crann/` | State needs to be synced between service worker and content script — **not yet implemented; deferred** |
 
 ### Messaging
 
 | Variant | Path | Use when |
 |---|---|---|
 | `typed-messages` | `blocks/messaging/typed-messages/` | Always — this is required in all extensions |
-| `crann-sync` | `blocks/messaging/crann-sync/` | In addition to typed-messages, when using Crann for state |
+| `crann-sync` | `blocks/messaging/crann-sync/` | In addition to typed-messages, when using Crann for state — **not yet implemented; deferred** |
 
 ### UI (Popup Window)
 
 | Variant | Path | Use when |
 |---|---|---|
 | `react` | `blocks/popup-ui/react/` | React-based UI mounted inside the content script container |
-| `vanilla` | `blocks/popup-ui/vanilla/` | No framework, plain TypeScript DOM manipulation |
+| `vanilla` | `blocks/popup-ui/vanilla/` | No framework, plain TypeScript DOM manipulation — **not yet implemented; deferred** |
 
 ### Manifest Templates
 
@@ -77,27 +77,28 @@ Each block lives at `blocks/<category>/<variant>/`. Every block contains:
 
 ## Message Flow
 
-This is the canonical message flow for all extensions built with Athanor:
+This is the canonical message flow for all extensions built with Athanor.
+
+When the UI is mounted inside an iframe served from the extension origin (the standard `iframe-mount` pattern), the iframe document has extension context and can use `chrome.runtime.sendMessage` directly — no postMessage relay through the content script is needed:
 
 ```
-User interaction (UI in iframe/shadow-dom)
+User interaction (UI inside extension-origin iframe)
     ↓  chrome.runtime.sendMessage({ type: 'ACTION', payload: ... })
-Content Script
-    ↓  chrome.runtime.sendMessage (forwards or initiates)
 Service Worker
     ↓  fetch() — all external requests happen here
     ↓  chrome.tabs.sendMessage({ type: 'RESPONSE', payload: ... })
 Content Script
-    ↓  updates UI
+    ↓  forwards to iframe via window.postMessage  (or UI polls via onMessage)
+UI updates
 ```
 
-The UI layer never talks to the service worker directly. All messages pass through the content script.
+If you use `shadow-dom-mount` (deferred — not yet available), the UI does not have its own browsing context and cannot call `chrome.runtime.sendMessage` directly. In that case all messages must be relayed through the content script. Do not apply this relay pattern to the iframe case — it adds unnecessary complexity.
 
 ---
 
 ## Typed Message Contract
 
-All messages use a discriminated union defined in `blocks/messaging/typed-messages/types.ts`. When adding new message types for a specific extension, extend this union — do not bypass it.
+All messages use a discriminated union defined in `blocks/messaging/typed-messages/types.ts`. When you copy this block into a workspace extension, the `types.ts` in the workspace copy is yours to extend. Add new message variants there — do not bypass the union, and do not modify the library original.
 
 ```ts
 // Example shape — see the actual block for the full definition
@@ -126,41 +127,75 @@ When a user asks you to build an extension, follow these steps:
 Map the requirements to blocks from the catalog above. Document your selections.
 
 ### 3. Create the workspace directory
+
+The canonical layout for a full-featured extension:
+
 ```
 workspace/<extension-name>/
-├── manifest.json
-├── content-script/     ← from selected block
-├── service-worker/     ← from selected block
-├── ui/                 ← from selected popup-ui block
-├── messaging/          ← always include typed-messages
-└── tsconfig.json
+├── manifest.json           ← copied from blocks/manifest/templates/base/manifest.json, then filled in
+├── content-script/         ← copied from your chosen content-script block
+│   └── index.ts
+├── service-worker/         ← copied from your chosen service-worker block
+│   └── index.ts
+├── ui/                     ← copied from your chosen popup-ui block
+│   ├── index.tsx
+│   └── App.tsx
+├── messaging/              ← copied from blocks/messaging/typed-messages/
+│   ├── types.ts
+│   └── index.ts
+├── tsconfig.json           ← extend the root tsconfig: {"extends": "../../tsconfig.json", "include": ["**/*.ts","**/*.tsx"]}
+└── vite.config.ts          ← build config (see the popup-ui block's BLOCK.md for the required Vite setup)
 ```
 
 ### 4. Copy blocks in
-Copy the selected block directories into the workspace. **Do not reference blocks by path from the library — copy them in.** The extension must be self-contained.
+
+Copy the full directory of each selected block into the workspace at the paths shown above. Use your file system — for example:
+
+```
+cp -r blocks/content-script/iframe-mount/. workspace/<extension-name>/content-script/
+cp -r blocks/service-worker/basic/. workspace/<extension-name>/service-worker/
+cp -r blocks/messaging/typed-messages/. workspace/<extension-name>/messaging/
+cp -r blocks/popup-ui/react/. workspace/<extension-name>/ui/
+cp blocks/manifest/templates/base/manifest.json workspace/<extension-name>/manifest.json
+```
+
+**Do not reference blocks by path from the library — copy them in.** The extension must be self-contained. The `BLOCK.md` files do not need to be copied.
 
 ### 5. Wire the blocks
-- Import message types into both content script and service worker
-- Register `onMessage` handlers in the service worker
-- Call `sendMessage` from the content script
-- Mount the UI from the content script entry point
-- Fill in `manifest.json` from the base template
+
+After copying, update import paths within the workspace files so they resolve correctly:
+
+- In `content-script/index.ts`: import message types from `../messaging/types`
+- In `service-worker/index.ts`: import message types and helpers from `../messaging/index`
+- In `ui/App.tsx` (or equivalent): import message types from `../messaging/types`
+- Register `onMessage` handlers in `service-worker/index.ts`
+- Call `sendMessage` from the UI entry point (or content script, depending on mount type — see Message Flow section)
+- Confirm the content script mounts the UI iframe by pointing `src` at the correct extension URL (see the content-script block's `BLOCK.md`)
 
 ### 6. Populate manifest.json
-Required fields from the base template:
+
+The copied `manifest.json` contains placeholder values. Fill in every field marked with a comment. Required fields:
+
 - `name`, `version`, `description`
 - `manifest_version: 3`
-- `permissions` — add only what's needed
-- `content_scripts` — point to your content script entry
-- `background.service_worker` — point to your service worker entry
+- `permissions` — add only what's needed (e.g. `"storage"`, `"tabs"`)
+- `host_permissions` — add only the origins your service worker needs to fetch from
+- `content_scripts` — set `"js"` to point to your built content script entry (e.g. `"content-script/index.js"`)
+- `background.service_worker` — point to your built service worker entry (e.g. `"service-worker/index.js"`)
+- `web_accessible_resources` — include the UI HTML file so the content script can load it in the iframe
 - **Do not add `action.default_popup`**
 
 ### 7. Verify the wiring
-Before declaring done, trace the message flow end-to-end and confirm:
-- Content script mounts the UI correctly
-- A user action in the UI triggers a typed message
-- The service worker receives and handles it
-- The response flows back to the UI
+
+Before declaring done, trace the message flow end-to-end and confirm each step is reachable in the code:
+
+1. The content script's `DOMContentLoaded` (or `chrome.runtime.onMessage` toggle handler) creates the iframe and sets its `src` to a `web_accessible_resources` URL
+2. The UI sends a typed `ExtensionMessage` via `chrome.runtime.sendMessage`
+3. The service worker's `onMessage` listener matches on `message.type` and handles it
+4. The service worker calls `sendResponse` (or `chrome.tabs.sendMessage`) with a typed response
+5. The UI receives the response and updates the DOM
+
+If any step is missing or the types don't align across the three entry points (content script, service worker, UI), fix it before loading the extension.
 
 ---
 

@@ -10,9 +10,9 @@
 # --- handoff point ---
 
 ## Phase 2: AI.md Review Pass
-- [ ] Read `docs/AI.md` with fresh eyes; verify every block referenced in the catalog actually maps to a block that will exist after Phase 3
-- [ ] Verify the Assembly Process section is unambiguous — could a capable AI follow it without this codebase open?
-- [ ] Add any clarifications surfaced during review; note anything deferred to later phases
+- [x] Read `docs/AI.md` with fresh eyes; verify every block referenced in the catalog actually maps to a block that will exist after Phase 3
+- [x] Verify the Assembly Process section is unambiguous — could a capable AI follow it without this codebase open?
+- [x] Add any clarifications surfaced during review; note anything deferred to later phases
 
 ## Phase 3: Messaging Block
 - [ ] Create `blocks/messaging/typed-messages/` — `BLOCK.md`, `types.ts`, `index.ts`
@@ -66,3 +66,8 @@
 - [ ] Commit all library work (not workspace — it's gitignored); tag `v0.1.0-foundation`
 
 ## Deferred
+- `blocks/content-script/shadow-dom-mount/` — listed in AI.md catalog but not in scope for foundation; marked in catalog as "not yet implemented; deferred"
+- `blocks/service-worker/with-crann/` — Crann state-sync variant; same status
+- `blocks/messaging/crann-sync/` — Crann messaging layer; same status
+- `blocks/popup-ui/vanilla/` — vanilla TS UI variant; same status
+- Message Flow diagram for shadow-dom relay pattern — needs a real implementation before it can be written precisely; placeholder note added to AI.md
