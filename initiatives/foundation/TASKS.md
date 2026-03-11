@@ -24,11 +24,11 @@
 # --- handoff point ---
 
 ## Phase 4: Content Script Block
-- [ ] Create `blocks/content-script/iframe-mount/` — `BLOCK.md`, `index.ts`
-- [ ] Implement iframe creation, positioning (fixed, top-right, 300×600px, z-index 2147483647), and injection
-- [ ] Implement toggle behaviour — clicking the extension icon opens/closes the iframe
-- [ ] Add listener for `chrome.runtime.onMessage` to handle toggle command from background
-- [ ] Add `BLOCK.md` — exports, integration notes, required manifest fields (`content_scripts`, `action` without `default_popup`)
+- [x] Create `blocks/content-script/iframe-mount/` — `BLOCK.md`, `index.ts`
+- [x] Implement iframe creation, positioning (fixed, top-right, 300×600px, z-index 2147483647), and injection
+- [x] Implement toggle behaviour — clicking the extension icon opens/closes the iframe
+- [x] Add listener for `chrome.runtime.onMessage` to handle toggle command from background
+- [x] Add `BLOCK.md` — exports, integration notes, required manifest fields (`content_scripts`, `action` without `default_popup`)
 
 ## Phase 5: Service Worker Block
 - [ ] Create `blocks/service-worker/basic/` — `BLOCK.md`, `index.ts`
