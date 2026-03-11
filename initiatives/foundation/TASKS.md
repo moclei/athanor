@@ -40,11 +40,11 @@
 # --- handoff point ---
 
 ## Phase 6: React UI Block
-- [ ] Create `blocks/popup-ui/react/` — `BLOCK.md`, `App.tsx`, `index.tsx`, `vite.config.ts`
-- [ ] Implement minimal `App.tsx` — button triggers `chrome.runtime.sendMessage({ type: 'FETCH_DATA', payload: { url: '' } })`, displays response
-- [ ] Implement `index.tsx` — mounts `<App />` to `#root`
-- [ ] Configure Vite build to output a single `index.html` + bundled JS suitable for loading inside an iframe
-- [ ] Add `BLOCK.md` — exports, integration notes, build instructions, required manifest fields (`web_accessible_resources`)
+- [x] Create `blocks/popup-ui/react/` — `BLOCK.md`, `App.tsx`, `index.tsx`, `vite.config.ts`
+- [x] Implement minimal `App.tsx` — button triggers `chrome.runtime.sendMessage({ type: 'FETCH_DATA', payload: { url: '' } })`, displays response
+- [x] Implement `index.tsx` — mounts `<App />` to `#root`
+- [x] Configure Vite build to output a single `index.html` + bundled JS suitable for loading inside an iframe
+- [x] Add `BLOCK.md` — exports, integration notes, build instructions, required manifest fields (`web_accessible_resources`)
 
 ## Phase 7: Manifest Template
 - [ ] Create `blocks/manifest/templates/base/` — `BLOCK.md`, `manifest.json`
