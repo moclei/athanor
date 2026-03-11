@@ -15,11 +15,11 @@
 - [x] Add any clarifications surfaced during review; note anything deferred to later phases
 
 ## Phase 3: Messaging Block
-- [ ] Create `blocks/messaging/typed-messages/` — `BLOCK.md`, `types.ts`, `index.ts`
-- [ ] Implement discriminated union type for `ExtensionMessage` with `FETCH_DATA`, `DATA_RESPONSE`, `ERROR` variants
-- [ ] Implement typed `sendMessage(msg: ExtensionMessage): Promise<void>` wrapper
-- [ ] Implement typed `onMessage(handler: MessageHandler): void` wrapper (handles `return true` for async)
-- [ ] Add `BLOCK.md` — exports, integration notes, manifest requirements (none for this block)
+- [x] Create `blocks/messaging/typed-messages/` — `BLOCK.md`, `types.ts`, `index.ts`
+- [x] Implement discriminated union type for `ExtensionMessage` with `FETCH_DATA`, `DATA_RESPONSE`, `ERROR` variants
+- [x] Implement typed `sendMessage(msg: ExtensionMessage): Promise<void>` wrapper
+- [x] Implement typed `onMessage(handler: MessageHandler): void` wrapper (handles `return true` for async)
+- [x] Add `BLOCK.md` — exports, integration notes, manifest requirements (none for this block)
 
 # --- handoff point ---
 
