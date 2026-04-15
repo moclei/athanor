@@ -1,6 +1,67 @@
 import { createConfig, Scope, Persist } from 'crann';
 import { nanoid } from 'nanoid';
-import type { ProjectData, Capture, SelectionRect } from './types';
+import type { ProjectData, Capture, SelectionRect, TaxonomyNode } from './types';
+
+function findNodeInTree(nodes: TaxonomyNode[], id: string): TaxonomyNode | null {
+  for (const node of nodes) {
+    if (node.id === id) return node;
+    const found = findNodeInTree(node.children, id);
+    if (found) return found;
+  }
+  return null;
+}
+
+function removeNodeFromTree(nodes: TaxonomyNode[], id: string): [TaxonomyNode[], TaxonomyNode | null] {
+  for (let i = 0; i < nodes.length; i++) {
+    if (nodes[i]!.id === id) {
+      const removed = nodes[i]!;
+      return [[...nodes.slice(0, i), ...nodes.slice(i + 1)], removed];
+    }
+    const [updatedChildren, removed] = removeNodeFromTree(nodes[i]!.children, id);
+    if (removed) {
+      const updated = [...nodes];
+      updated[i] = { ...nodes[i]!, children: updatedChildren };
+      return [updated, removed];
+    }
+  }
+  return [nodes, null];
+}
+
+function insertNodeInTree(
+  nodes: TaxonomyNode[],
+  parentId: string | null,
+  node: TaxonomyNode,
+  index: number,
+): TaxonomyNode[] {
+  if (parentId === null) {
+    const result = [...nodes];
+    result.splice(Math.min(index, result.length), 0, node);
+    return result;
+  }
+  return nodes.map((n) => {
+    if (n.id === parentId) {
+      const children = [...n.children];
+      children.splice(Math.min(index, children.length), 0, node);
+      return { ...n, children };
+    }
+    return { ...n, children: insertNodeInTree(n.children, parentId, node, index) };
+  });
+}
+
+function updateNodeInTree(
+  nodes: TaxonomyNode[],
+  id: string,
+  update: Partial<TaxonomyNode>,
+): TaxonomyNode[] {
+  return nodes.map((n) => {
+    if (n.id === id) return { ...n, ...update };
+    return { ...n, children: updateNodeInTree(n.children, id, update) };
+  });
+}
+
+function collectNodeIds(node: TaxonomyNode): string[] {
+  return [node.id, ...node.children.flatMap(collectNodeIds)];
+}
 
 export const config = createConfig({
   name: 'freehold',
@@ -158,23 +219,79 @@ export const config = createConfig({
     },
 
     addTaxonomyNode: {
-      handler: async (_ctx, _args: { parentId: string | null; label: string }) => {
-        // Phase 4
+      handler: async (ctx, args: { parentId: string | null; label: string }) => {
+        const { slugify, writeProjectJson } = await import('./service-worker/downloads');
+
+        const activeProject = ctx.state.projects[ctx.state.activeProjectId!];
+        if (!activeProject) return;
+
+        const newNode: TaxonomyNode = { id: nanoid(), label: args.label, children: [] };
+        const taxonomy = insertNodeInTree(
+          activeProject.taxonomy,
+          args.parentId,
+          newNode,
+          args.parentId
+            ? (findNodeInTree(activeProject.taxonomy, args.parentId)?.children.length ?? 0)
+            : activeProject.taxonomy.length,
+        );
+
+        const updatedProject: ProjectData = { ...activeProject, taxonomy };
+        const projects = { ...ctx.state.projects, [activeProject.id]: updatedProject };
+        await ctx.setState({ projects });
+        await writeProjectJson(slugify(activeProject.name), updatedProject);
       },
     },
     renameTaxonomyNode: {
-      handler: async (_ctx, _args: { nodeId: string; label: string }) => {
-        // Phase 4
+      handler: async (ctx, args: { nodeId: string; label: string }) => {
+        const { slugify, writeProjectJson } = await import('./service-worker/downloads');
+
+        const activeProject = ctx.state.projects[ctx.state.activeProjectId!];
+        if (!activeProject) return;
+
+        const taxonomy = updateNodeInTree(activeProject.taxonomy, args.nodeId, { label: args.label });
+        const updatedProject: ProjectData = { ...activeProject, taxonomy };
+        const projects = { ...ctx.state.projects, [activeProject.id]: updatedProject };
+        await ctx.setState({ projects });
+        await writeProjectJson(slugify(activeProject.name), updatedProject);
       },
     },
     deleteTaxonomyNode: {
-      handler: async (_ctx, _nodeId: string) => {
-        // Phase 4
+      handler: async (ctx, nodeId: string) => {
+        const { slugify, writeProjectJson } = await import('./service-worker/downloads');
+
+        const activeProject = ctx.state.projects[ctx.state.activeProjectId!];
+        if (!activeProject) return;
+
+        const existing = findNodeInTree(activeProject.taxonomy, nodeId);
+        if (!existing) return;
+
+        const orphanIds = new Set(collectNodeIds(existing));
+        const [taxonomy] = removeNodeFromTree(activeProject.taxonomy, nodeId);
+        const captures = activeProject.captures.map((c: Capture) =>
+          orphanIds.has(c.taxonomyNodeId!) ? { ...c, taxonomyNodeId: null } : c,
+        );
+
+        const updatedProject: ProjectData = { ...activeProject, taxonomy, captures };
+        const projects = { ...ctx.state.projects, [activeProject.id]: updatedProject };
+        await ctx.setState({ projects });
+        await writeProjectJson(slugify(activeProject.name), updatedProject);
       },
     },
     moveTaxonomyNode: {
-      handler: async (_ctx, _args: { nodeId: string; newParentId: string | null; newIndex: number }) => {
-        // Phase 4
+      handler: async (ctx, args: { nodeId: string; newParentId: string | null; newIndex: number }) => {
+        const { slugify, writeProjectJson } = await import('./service-worker/downloads');
+
+        const activeProject = ctx.state.projects[ctx.state.activeProjectId!];
+        if (!activeProject) return;
+
+        const [withoutNode, removed] = removeNodeFromTree(activeProject.taxonomy, args.nodeId);
+        if (!removed) return;
+
+        const taxonomy = insertNodeInTree(withoutNode, args.newParentId, removed, args.newIndex);
+        const updatedProject: ProjectData = { ...activeProject, taxonomy };
+        const projects = { ...ctx.state.projects, [activeProject.id]: updatedProject };
+        await ctx.setState({ projects });
+        await writeProjectJson(slugify(activeProject.name), updatedProject);
       },
     },
   },
