@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useCrannActions } from '../hooks';
+import { CategoryPicker } from './CategoryPicker';
 import type { Capture } from '../../types';
 
 interface Props {
@@ -28,7 +29,7 @@ export function CaptureCard({ capture }: Props) {
     <div className="fh-capture-card">
       <div className="fh-capture-filename">{capture.filename}</div>
       <div className="fh-capture-url">{extractPathname(capture.url)}</div>
-      <div className="fh-capture-category">Uncategorized</div>
+      <CategoryPicker capture={capture} />
       <textarea
         className="fh-capture-notes"
         placeholder="Add notes…"
