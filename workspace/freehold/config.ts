@@ -1,11 +1,7 @@
 import { createConfig, Scope, Persist } from 'crann';
+import { nanoid } from 'nanoid';
+import type { ProjectData, Capture, SelectionRect } from './types';
 
-/**
- * Crann state configuration for Freehold.
- * Copied from block: state/crann/config — customized for Freehold schema.
- *
- * Shared by service-worker (createStore) and content script (createCrannHooks).
- */
 export const config = createConfig({
   name: 'freehold',
 
@@ -20,59 +16,165 @@ export const config = createConfig({
   },
 
   projects: {
-    default: {} as Record<string, import('./types').ProjectData>,
+    default: {} as Record<string, ProjectData>,
     persist: Persist.Local,
   },
 
   actions: {
     createProject: {
-      handler: async (_ctx, _args: { name: string; domain: string }) => {
-        // Implemented in Phase 2
+      handler: async (ctx, args: { name: string; domain: string }) => {
+        const { slugify, writeProjectJson } = await import('./service-worker/downloads');
+        const id = nanoid();
+        const project: ProjectData = {
+          id,
+          name: args.name,
+          domain: args.domain,
+          createdAt: new Date().toISOString(),
+          taxonomy: [],
+          captures: [],
+        };
+        const projects = { ...ctx.state.projects, [id]: project };
+        await ctx.setState({ projects, activeProjectId: id });
+        await writeProjectJson(slugify(args.name), project);
       },
     },
+
     selectProject: {
-      handler: async (_ctx, _projectId: string) => {
-        // Implemented in Phase 2
+      handler: async (ctx, projectId: string) => {
+        await ctx.setState({ activeProjectId: projectId });
       },
     },
+
     deleteProject: {
-      handler: async (_ctx, _projectId: string) => {
-        // Implemented in Phase 2
+      handler: async (ctx, projectId: string) => {
+        const projects = { ...ctx.state.projects };
+        delete projects[projectId];
+        const activeProjectId =
+          ctx.state.activeProjectId === projectId ? null : ctx.state.activeProjectId;
+        await ctx.setState({ projects, activeProjectId });
       },
     },
+
     captureRegion: {
-      handler: async (_ctx, _rect: import('./types').SelectionRect) => {
-        // Implemented in Phase 2
+      handler: async (ctx, rect: SelectionRect) => {
+        const { captureAndCrop } = await import('./service-worker/capture');
+        const { slugify, buildCaptureFilename, writeScreenshot, writeProjectJson } =
+          await import('./service-worker/downloads');
+
+        const activeProject = ctx.state.projects[ctx.state.activeProjectId!];
+        if (!activeProject) return;
+
+        const tabId = ctx.agentLocation?.tabId;
+        if (tabId === undefined) return;
+
+        const tab = await chrome.tabs.get(tabId);
+        const { dataUrl } = await captureAndCrop(tabId, rect);
+
+        const captureIndex = activeProject.captures.length + 1;
+        const filename = buildCaptureFilename(captureIndex, []);
+        const projectSlug = slugify(activeProject.name);
+
+        await writeScreenshot(projectSlug, filename, dataUrl);
+
+        const capture: Capture = {
+          id: nanoid(),
+          timestamp: new Date().toISOString(),
+          url: tab.url ?? '',
+          pageTitle: tab.title ?? '',
+          taxonomyNodeId: null,
+          notes: '',
+          filename,
+        };
+
+        const updatedProject: ProjectData = {
+          ...activeProject,
+          captures: [...activeProject.captures, capture],
+        };
+        const projects = { ...ctx.state.projects, [activeProject.id]: updatedProject };
+        await ctx.setState({ projects });
+        await writeProjectJson(projectSlug, updatedProject);
       },
     },
+
     dropFile: {
-      handler: async (_ctx, _args: { dataUrl: string; originalName: string }) => {
-        // Implemented in Phase 2
+      handler: async (ctx, args: { dataUrl: string; originalName: string }) => {
+        const { slugify, buildCaptureFilename, writeScreenshot, writeProjectJson } =
+          await import('./service-worker/downloads');
+
+        const activeProject = ctx.state.projects[ctx.state.activeProjectId!];
+        if (!activeProject) return;
+
+        const tabId = ctx.agentLocation?.tabId;
+        const tab = tabId !== undefined ? await chrome.tabs.get(tabId) : null;
+
+        const captureIndex = activeProject.captures.length + 1;
+        const filename = buildCaptureFilename(captureIndex, []);
+        const projectSlug = slugify(activeProject.name);
+
+        await writeScreenshot(projectSlug, filename, args.dataUrl);
+
+        const capture: Capture = {
+          id: nanoid(),
+          timestamp: new Date().toISOString(),
+          url: tab?.url ?? '',
+          pageTitle: tab?.title ?? '',
+          taxonomyNodeId: null,
+          notes: '',
+          filename,
+        };
+
+        const updatedProject: ProjectData = {
+          ...activeProject,
+          captures: [...activeProject.captures, capture],
+        };
+        const projects = { ...ctx.state.projects, [activeProject.id]: updatedProject };
+        await ctx.setState({ projects });
+        await writeProjectJson(projectSlug, updatedProject);
       },
     },
+
     updateCapture: {
-      handler: async (_ctx, _args: { captureId: string; taxonomyNodeId?: string | null; notes?: string }) => {
-        // Implemented in Phase 2
+      handler: async (ctx, args: { captureId: string; taxonomyNodeId?: string | null; notes?: string }) => {
+        const { slugify, writeProjectJson } = await import('./service-worker/downloads');
+
+        const activeProject = ctx.state.projects[ctx.state.activeProjectId!];
+        if (!activeProject) return;
+
+        const idx = activeProject.captures.findIndex((c) => c.id === args.captureId);
+        if (idx === -1) return;
+
+        const updatedCapture = { ...activeProject.captures[idx]! };
+        if (args.taxonomyNodeId !== undefined) updatedCapture.taxonomyNodeId = args.taxonomyNodeId;
+        if (args.notes !== undefined) updatedCapture.notes = args.notes;
+
+        const captures = [...activeProject.captures];
+        captures[idx] = updatedCapture;
+
+        const updatedProject: ProjectData = { ...activeProject, captures };
+        const projects = { ...ctx.state.projects, [activeProject.id]: updatedProject };
+        await ctx.setState({ projects });
+        await writeProjectJson(slugify(activeProject.name), updatedProject);
       },
     },
+
     addTaxonomyNode: {
       handler: async (_ctx, _args: { parentId: string | null; label: string }) => {
-        // Implemented in Phase 4
+        // Phase 4
       },
     },
     renameTaxonomyNode: {
       handler: async (_ctx, _args: { nodeId: string; label: string }) => {
-        // Implemented in Phase 4
+        // Phase 4
       },
     },
     deleteTaxonomyNode: {
       handler: async (_ctx, _nodeId: string) => {
-        // Implemented in Phase 4
+        // Phase 4
       },
     },
     moveTaxonomyNode: {
       handler: async (_ctx, _args: { nodeId: string; newParentId: string | null; newIndex: number }) => {
-        // Implemented in Phase 4
+        // Phase 4
       },
     },
   },
