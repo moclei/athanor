@@ -17,6 +17,7 @@ Athanor is a composable browser extension primitives library with an AI assembly
 
 ## Active Initiatives
 
+- `initiatives/freehold/` — build a structured competitive audit capture extension using the `shadow-crann` recipe
 - `initiatives/lensor-extraction/` — extract reusable blocks from Lensor/Crann into Athanor (Phases 1–3 complete; Phase 4 next)
 
 ## Completed Initiatives
