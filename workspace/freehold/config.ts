@@ -140,7 +140,7 @@ export const config = createConfig({
         const activeProject = ctx.state.projects[ctx.state.activeProjectId!];
         if (!activeProject) return;
 
-        const idx = activeProject.captures.findIndex((c) => c.id === args.captureId);
+        const idx = activeProject.captures.findIndex((c: Capture) => c.id === args.captureId);
         if (idx === -1) return;
 
         const updatedCapture = { ...activeProject.captures[idx]! };
