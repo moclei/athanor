@@ -54,4 +54,6 @@ store.subscribe(['active'], (_state, changes, agentInfo) => {
   }
 });
 
+chrome.downloads.setUiOptions({ enabled: false });
+
 chrome.action.onClicked.addListener(handleActionClick);
