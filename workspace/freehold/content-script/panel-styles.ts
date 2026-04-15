@@ -351,6 +351,194 @@ export const panelStyles = /* css */ `
   text-align: center;
 }
 
+/* ------------------------------------------------ Taxonomy tree */
+.fh-tree-level {
+  display: flex;
+  flex-direction: column;
+}
+
+.fh-tree-node {
+  display: flex;
+  flex-direction: column;
+}
+
+.fh-tree-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 4px;
+  border-radius: 5px;
+  min-height: 30px;
+  transition: background 0.1s;
+}
+.fh-tree-row:hover {
+  background: #f5f5f5;
+}
+
+.fh-tree-toggle {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 8px;
+  color: #888;
+  border-radius: 4px;
+  padding: 0;
+}
+.fh-tree-toggle:hover {
+  background: #e8e8e8;
+  color: #444;
+}
+
+.fh-tree-drag-handle {
+  width: 16px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: grab;
+  color: #ccc;
+  font-size: 10px;
+  border-radius: 3px;
+  user-select: none;
+}
+.fh-tree-drag-handle:hover {
+  color: #888;
+  background: #eee;
+}
+
+.fh-tree-label {
+  flex: 1;
+  font-size: 12px;
+  color: #333;
+  cursor: default;
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+.fh-tree-label:hover {
+  background: #ececec;
+}
+
+.fh-tree-rename-input {
+  flex: 1;
+  font-size: 12px;
+  font-family: inherit;
+  padding: 2px 6px;
+  border: 1px solid #888;
+  border-radius: 4px;
+  outline: none;
+  background: #fff;
+  color: #333;
+}
+
+.fh-tree-actions {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.fh-tree-menu-btn {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  color: #aaa;
+  border-radius: 4px;
+  line-height: 1;
+  padding: 0;
+  opacity: 0;
+  transition: opacity 0.1s, background 0.1s;
+}
+.fh-tree-row:hover .fh-tree-menu-btn {
+  opacity: 1;
+}
+.fh-tree-menu-btn:hover {
+  background: #e0e0e0;
+  color: #444;
+}
+
+.fh-tree-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 10;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  padding: 4px 0;
+  min-width: 130px;
+}
+
+.fh-tree-menu-item {
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-family: inherit;
+  text-align: left;
+  border: none;
+  background: none;
+  color: #333;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.fh-tree-menu-item:hover {
+  background: #f0f0f0;
+}
+.fh-tree-menu-item--danger {
+  color: #d44;
+}
+.fh-tree-menu-item--danger:hover {
+  background: #fef0f0;
+}
+
+.fh-tree-submenu {
+  border-top: 1px solid #eee;
+  padding-top: 4px;
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.fh-tree-submenu .fh-tree-menu-item {
+  font-size: 11px;
+  color: #555;
+  padding: 5px 16px;
+}
+
+/* ---------------------------------------------- Category picker */
+.fh-category-picker {
+  width: 100%;
+  margin-top: 6px;
+  padding: 4px 6px;
+  font-size: 11px;
+  font-family: inherit;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  background: #fff;
+  color: #555;
+  cursor: pointer;
+  appearance: auto;
+}
+.fh-category-picker:focus {
+  outline: none;
+  border-color: #888;
+}
+
 /* -------------------------------------------------- Scrollbar */
 .fh-content::-webkit-scrollbar {
   width: 5px;
