@@ -219,28 +219,28 @@ feat(blocks): add settings-page/react block
 
 ### Batch 5.1
 
-- [ ] Read `athanor/docs/AI.md`
-- [ ] Read `athanor/docs/BLOCKS.md`
-- [ ] Read `athanor/recipes/minimal-react/README.md` for format reference
-- [ ] Read all four new BLOCK.md files to cross-check accuracy
+- [x] Read `athanor/docs/AI.md`
+- [x] Read `athanor/docs/BLOCKS.md`
+- [x] Read `athanor/recipes/minimal-react/README.md` for format reference
+- [x] Read all four new BLOCK.md files to cross-check accuracy
 
 **Update `docs/AI.md`:**
-- [ ] Add new **State** catalog section with `state/crann` entry (when to use: when state must sync across service worker and content scripts)
-- [ ] Update Content Script table: remove "not yet implemented; deferred" from `shadow-dom-mount` row
-- [ ] Update Service Worker table: add `with-alarms` row; remove the deferred `with-crann` row (superseded by `state/crann`)
-- [ ] Update Messaging table: remove the deferred `crann-sync` row (superseded by `state/crann`)
-- [ ] Add new **Settings Page** catalog section with `settings-page/react` entry
-- [ ] Update Hard Constraints section: remove the parenthetical "(Crann blocks are not yet implemented — deferred to a later phase.)" from the shared state constraint
-- [ ] Update Message Flow section: replace the placeholder note about shadow-dom relay with accurate description (shadow DOM UI does not have extension context; must use content script's `chrome.runtime.sendMessage` or Crann agent)
-- [ ] Update "What Not To Do" if needed
+- [x] Add new **State** catalog section with `state/crann` entry (when to use: when state must sync across service worker and content scripts)
+- [x] Update Content Script table: remove "not yet implemented; deferred" from `shadow-dom-mount` row
+- [x] Update Service Worker table: add `with-alarms` row; remove the deferred `with-crann` row (superseded by `state/crann`)
+- [x] Update Messaging table: remove the deferred `crann-sync` row (superseded by `state/crann`)
+- [x] Add new **Settings Page** catalog section with `settings-page/react` entry
+- [x] Update Hard Constraints section: remove the parenthetical "(Crann blocks are not yet implemented — deferred to a later phase.)" from the shared state constraint
+- [x] Update Message Flow section: replace the placeholder note about shadow-dom relay with accurate description (shadow DOM UI does not have extension context; must use content script's `chrome.runtime.sendMessage` or Crann agent)
+- [x] Update "What Not To Do" if needed
 
 **Update `docs/BLOCKS.md`:**
-- [ ] Add entries for: `state/crann`, `content-script/shadow-dom-mount`, `service-worker/with-alarms`, `settings-page/react`
+- [x] Add entries for: `state/crann`, `content-script/shadow-dom-mount`, `service-worker/with-alarms`, `settings-page/react`
 
 **Write `recipes/shadow-crann/README.md`:**
-- [ ] Block selection table (which blocks, why each)
-- [ ] Directory layout after copying all blocks in
-- [ ] Step-by-step wiring:
+- [x] Block selection table (which blocks, why each)
+- [x] Directory layout after copying all blocks in
+- [x] Step-by-step wiring:
   1. Define `config.ts` using `state/crann/config.ts` as template
   2. Wire `service-worker.ts` using `state/crann/service-worker.ts` as template
   3. Wire `content-script/index.ts` using `shadow-dom-mount`
@@ -249,7 +249,7 @@ feat(blocks): add settings-page/react block
   6. (Optional) Add `with-alarms` inactivity timeout
   7. (Optional) Add `settings-page/react`
   8. Populate `manifest.json` fields for this stack
-- [ ] Message flow diagram for shadow-dom + Crann (Crann replaces the chrome.runtime relay)
+- [x] Message flow diagram for shadow-dom + Crann (Crann replaces the chrome.runtime relay)
 
 ### Commit
 ```
@@ -257,8 +257,8 @@ feat(docs): update AI.md, BLOCKS.md for lensor-extraction blocks; add shadow-cra
 ```
 
 ### Close initiative
-- [ ] Tag `v0.2.0-lensor-extraction` on the commit
-- [ ] Mark all tasks in this file as complete
+- [x] Tag `v0.2.0-lensor-extraction` on the commit
+- [x] Mark all tasks in this file as complete
 - [ ] (Optional) Generate a summary of what was built for the project CHANGELOG or `.context/`
 
 ---

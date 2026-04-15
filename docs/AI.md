@@ -26,7 +26,7 @@ These are non-negotiable. Do not deviate.
 - **No default popup.** The extension UI is always mounted by the content script, either via iframe or Shadow DOM. The `default_popup` key must not appear in the manifest.
 - **All network requests go through the service worker.** The content script never fetches directly.
 - **All messages are typed.** Use the typed messaging block. Never pass untyped objects through `chrome.runtime.sendMessage`.
-- **No shared runtime state between blocks** unless the Crann state-sync block is explicitly included. (Crann blocks are not yet implemented — deferred to a later phase.)
+- **No shared runtime state between blocks** unless the Crann state-sync block is explicitly included.
 
 ---
 
@@ -44,21 +44,26 @@ Each block lives at `blocks/<category>/<variant>/`. Every block contains:
 | Variant | Path | Use when |
 |---|---|---|
 | `iframe-mount` | `blocks/content-script/iframe-mount/` | You need a persistent, styled UI injected into the page |
-| `shadow-dom-mount` | `blocks/content-script/shadow-dom-mount/` | You need style encapsulation without a separate browsing context — **not yet implemented; deferred** |
+| `shadow-dom-mount` | `blocks/content-script/shadow-dom-mount/` | You need style encapsulation without a separate browsing context |
 
 ### Service Worker
 
 | Variant | Path | Use when |
 |---|---|---|
 | `basic` | `blocks/service-worker/basic/` | Standard fetch handling, no persistent state |
-| `with-crann` | `blocks/service-worker/with-crann/` | State needs to be synced between service worker and content script — **not yet implemented; deferred** |
+| `with-alarms` | `blocks/service-worker/with-alarms/` | You need an inactivity timeout that auto-deactivates the extension after a period of user inactivity |
 
 ### Messaging
 
 | Variant | Path | Use when |
 |---|---|---|
 | `typed-messages` | `blocks/messaging/typed-messages/` | Always — this is required in all extensions |
-| `crann-sync` | `blocks/messaging/crann-sync/` | In addition to typed-messages, when using Crann for state — **not yet implemented; deferred** |
+
+### State
+
+| Variant | Path | Use when |
+|---|---|---|
+| `crann` | `blocks/state/crann/` | State must sync between service worker and content scripts in real time (toggle state, per-tab flags, global counters) |
 
 ### UI (Popup Window)
 
@@ -66,6 +71,12 @@ Each block lives at `blocks/<category>/<variant>/`. Every block contains:
 |---|---|---|
 | `react` | `blocks/popup-ui/react/` | React-based UI mounted inside the content script container |
 | `vanilla` | `blocks/popup-ui/vanilla/` | No framework, plain TypeScript DOM manipulation — **not yet implemented; deferred** |
+
+### Settings Page
+
+| Variant | Path | Use when |
+|---|---|---|
+| `react` | `blocks/settings-page/react/` | You need a full-tab settings page opened via `chrome.tabs.create` |
 
 ### Manifest Templates
 
@@ -92,7 +103,7 @@ Content Script
 UI updates
 ```
 
-If you use `shadow-dom-mount` (deferred — not yet available), the UI does not have its own browsing context and cannot call `chrome.runtime.sendMessage` directly. In that case all messages must be relayed through the content script. Do not apply this relay pattern to the iframe case — it adds unnecessary complexity.
+If you use `shadow-dom-mount`, the UI does not have its own browsing context and cannot call `chrome.runtime.sendMessage` directly. Use the content script's `chrome.runtime.sendMessage` to relay messages, or use `state/crann` — Crann's RPC actions and state sync run through the content script context automatically, eliminating the need for manual relay boilerplate. Do not apply this relay pattern to the iframe case — it adds unnecessary complexity.
 
 ---
 
@@ -206,6 +217,7 @@ Recipes are pre-assembled combinations for common patterns. Start here if the ex
 | Recipe | Path | Description |
 |---|---|---|
 | `minimal-react` | `recipes/minimal-react/` | iframe mount + basic service worker + typed messages + React UI |
+| `shadow-crann` | `recipes/shadow-crann/` | Shadow DOM mount + Crann state sync + optional inactivity alarms and settings page (the Lensor-style stack) |
 
 If a recipe exists for your use case, use it as your starting point instead of assembling from scratch.
 
