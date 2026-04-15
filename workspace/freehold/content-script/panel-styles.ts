@@ -73,6 +73,10 @@ export const panelStyles = /* css */ `
   background: #f0f0f0;
   color: #333;
 }
+.fh-close-btn:focus-visible {
+  outline: 2px solid #666;
+  outline-offset: 1px;
+}
 
 /* --------------------------------------------------------- Tab bar */
 .fh-tabs {
@@ -100,6 +104,10 @@ export const panelStyles = /* css */ `
 .fh-tab--active {
   color: #111;
   border-bottom-color: #111;
+}
+.fh-tab:focus-visible {
+  outline: 2px solid #666;
+  outline-offset: -2px;
 }
 
 /* --------------------------------------------------- Tab content area */
@@ -203,6 +211,11 @@ export const panelStyles = /* css */ `
   border: 1px solid #e8e8e8;
   border-radius: 8px;
   padding: 10px 12px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.fh-capture-card:hover {
+  border-color: #d0d0d0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .fh-capture-filename {

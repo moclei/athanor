@@ -73,7 +73,7 @@
 - [x] Wire auto-save debounce for notes field — `updateCapture` fires on blur or after ~500ms debounce while typing
 - [x] Wire `createProject` to apply default starter taxonomy and write initial `project.json` + empty `screenshots/` directory to Downloads
 - [x] First-run experience — when no projects exist, show "Create your first project" form (name + domain) instead of capture/taxonomy tabs
-- [ ] Panel CSS polish — consistent spacing, scrollable capture list, tab active states, hover effects, close button styling
+- [x] Panel CSS polish — consistent spacing, scrollable capture list, tab active states, hover effects, close button styling
 - [ ] Suppress download bubble — call `chrome.downloads.setUiOptions({ enabled: false })` in service worker startup (requires `downloads.ui` permission)
 - [ ] Full build and manual test: `npm run build`, load unpacked from `dist/`, verify complete flow (create project → take screenshot → categorize → edit notes → check Downloads folder output)
 - [ ] 🔄 Handoff
