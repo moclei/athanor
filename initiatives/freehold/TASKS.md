@@ -10,7 +10,7 @@
 - [x] Create `tsconfig.json` extending root config
 - [x] Create `vite.config.ts` (content script + React bundle, IIFE) and `vite.config.scripts.ts` (service worker, ES module + manifest copy)
 - [x] Create `manifest.json` with all permissions (scripting, activeTab, storage, unlimitedStorage, downloads, downloads.ui, host: `<all_urls>`), no `content_scripts`, no `default_popup`
-- [ ] Create `types.ts` — `ProjectData`, `Capture`, `TaxonomyNode`, `SelectionRect` interfaces
+- [x] Create `types.ts` — `ProjectData`, `Capture`, `TaxonomyNode`, `SelectionRect` interfaces
 - [ ] Spike: OffscreenCanvas cropping in service worker — write a minimal test that does `captureVisibleTab` → `fetch(dataUrl)` → `createImageBitmap` → `OffscreenCanvas.drawImage` → `convertToBlob` → data URL conversion → `chrome.downloads.download()`. Verify the full pipeline works. Document the result in PLAN.md (confirm or note fallback to `chrome.offscreen` API).
 - [ ] Spike: File drop in shadow DOM — add a minimal drop zone inside the shadow root, verify native `dragenter`/`dragover`/`drop` events fire correctly on an element inside a closed shadow DOM. Document result in PLAN.md.
 - [ ] Verify: `npm install` succeeds, `npm run build` produces `dist/` with `background.js`, `content-script/index.js`, and `manifest.json`

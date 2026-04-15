@@ -48,6 +48,26 @@ The `RegionSelectionOverlay` is conditionally rendered when `isSelecting` is tru
 
 Captures reference taxonomy nodes by `id` (nanoid). Renaming, moving, or reordering nodes does not orphan captures. Deleting a node sets `taxonomyNodeId: null` on any captures referencing it — they become "uncategorized".
 
+## Spike Results
+
+### OffscreenCanvas cropping in service worker (Phase 1)
+
+**Status:** Spike code written (`service-worker/capture-spike.ts`). Pending manual verification in Chrome.
+
+**Pipeline:** `captureVisibleTab` → `fetch(dataUrl)` → `response.blob()` → `createImageBitmap(blob)` → `new OffscreenCanvas(w, h)` → `ctx.drawImage()` (crop) → `canvas.convertToBlob()` → `blobToDataUrl()` (ArrayBuffer → base64) → `chrome.downloads.download({ url: dataUrl })`.
+
+**Expectation:** All APIs (`OffscreenCanvas`, `createImageBitmap`, `fetch` of data URLs) are available in Chrome MV3 service workers per the Web Workers spec. `OffscreenCanvas` was designed for worker contexts. The spike exercises every step so any runtime gap surfaces immediately on first load.
+
+**Fallback:** If `OffscreenCanvas` is not available in the service worker context, use the `chrome.offscreen` API to create an offscreen document with a regular `<canvas>`, perform the crop there, and message the result back.
+
+### File drop in shadow DOM (Phase 1)
+
+**Status:** Spike code written (inline drop handler in content-script shadow root). Pending manual verification.
+
+**Expectation:** Native drag/drop events (`dragenter`, `dragover`, `drop`) fire correctly on elements inside a closed shadow DOM. The shadow boundary does not intercept or retarget these events because they originate from user interaction with elements inside the shadow root. `FileReader.readAsDataURL()` works in the content script context.
+
+**Fallback:** If events don't fire inside the shadow root, attach listeners to the shadow host element in the light DOM and forward file data into the React tree via a callback ref.
+
 ## Rejected Approaches
 
 - Blob URLs for downloads — `URL.createObjectURL()` unavailable in service workers
