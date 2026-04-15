@@ -13,8 +13,8 @@
 - [x] Create `types.ts` — `ProjectData`, `Capture`, `TaxonomyNode`, `SelectionRect` interfaces
 - [x] Spike: OffscreenCanvas cropping in service worker — write a minimal test that does `captureVisibleTab` → `fetch(dataUrl)` → `createImageBitmap` → `OffscreenCanvas.drawImage` → `convertToBlob` → data URL conversion → `chrome.downloads.download()`. Verify the full pipeline works. Document the result in PLAN.md (confirm or note fallback to `chrome.offscreen` API).
 - [x] Spike: File drop in shadow DOM — add a minimal drop zone inside the shadow root, verify native `dragenter`/`dragover`/`drop` events fire correctly on an element inside a closed shadow DOM. Document result in PLAN.md.
-- [ ] Verify: `npm install` succeeds, `npm run build` produces `dist/` with `background.js`, `content-script/index.js`, and `manifest.json`
-- [ ] 🔄 Handoff
+- [x] Verify: `npm install` succeeds, `npm run build` produces `dist/` with `background.js`, `content-script/index.js`, and `manifest.json`
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 
