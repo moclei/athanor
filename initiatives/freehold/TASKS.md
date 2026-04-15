@@ -70,7 +70,7 @@
 **Session scope:** Wire remaining integration points, polish the UI, verify the complete build works end-to-end. Editing existing files, minimal new files.
 
 - [x] Wire Downloads write-through subscription — service worker subscribes to `projects` state changes, writes updated `project.json` for the active project on every mutation
-- [ ] Wire auto-save debounce for notes field — `updateCapture` fires on blur or after ~500ms debounce while typing
+- [x] Wire auto-save debounce for notes field — `updateCapture` fires on blur or after ~500ms debounce while typing
 - [ ] Wire `createProject` to apply default starter taxonomy and write initial `project.json` + empty `screenshots/` directory to Downloads
 - [ ] First-run experience — when no projects exist, show "Create your first project" form (name + domain) instead of capture/taxonomy tabs
 - [ ] Panel CSS polish — consistent spacing, scrollable capture list, tab active states, hover effects, close button styling

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useCrannActions } from '../hooks';
 import { CategoryPicker } from './CategoryPicker';
 import type { Capture } from '../../types';
@@ -18,8 +18,20 @@ function extractPathname(url: string): string {
 export function CaptureCard({ capture }: Props) {
   const { updateCapture } = useCrannActions();
   const [notes, setNotes] = useState(capture.notes);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (notes === capture.notes) return;
+    debounceRef.current = setTimeout(() => {
+      updateCapture({ captureId: capture.id, notes });
+    }, 500);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [notes, capture.id, capture.notes, updateCapture]);
 
   const handleBlur = useCallback(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
     if (notes !== capture.notes) {
       updateCapture({ captureId: capture.id, notes });
     }
