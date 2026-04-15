@@ -85,13 +85,14 @@ export const config = createConfig({
     createProject: {
       handler: async (ctx, args: { name: string; domain: string }) => {
         const { slugify, writeProjectJson } = await import('./service-worker/downloads');
+        const { buildDefaultTaxonomy } = await import('./ui/taxonomy-defaults');
         const id = nanoid();
         const project: ProjectData = {
           id,
           name: args.name,
           domain: args.domain,
           createdAt: new Date().toISOString(),
-          taxonomy: [],
+          taxonomy: buildDefaultTaxonomy(),
           captures: [],
         };
         const projects = { ...ctx.state.projects, [id]: project };
