@@ -36,17 +36,17 @@
 
 **Session scope:** Build the main React UI — app shell, project selector, capture view with screenshot + file drop, region selection overlay. ~8 files, highest file count but components are moderate complexity.
 
-- [ ] Wire `content-script/index.ts` — `connectStore(config)`, `initializeShadowMount(<App />)`, subscribe to `active` for show/hide, inject panel stylesheet into shadow root
-- [ ] Create panel stylesheet — CSS for panel positioning (fixed, top-right, 380px wide), tabs, capture cards, form controls; injected as `<style>` in shadow root
-- [ ] Create `ui/App.tsx` — root component: `useCrannReady` gate, tab switcher (Capture / Taxonomy), project selector in header, close button, first-run "Create your first project" form
-- [ ] Create `ui/components/ProjectSelector.tsx` — dropdown of existing projects + "New Project" option; calls `createProject` / `selectProject` actions
-- [ ] Create `ui/components/CaptureView.tsx` — "Take Screenshot" button (triggers `isSelecting` state), file drop zone area, capture list; conditionally renders `RegionSelectionOverlay`
-- [ ] Create `ui/components/RegionSelectionOverlay.tsx` — full-viewport overlay, semi-transparent background, crosshair cursor, click-drag rectangle with visual cutout, captures `devicePixelRatio`, fires `captureRegion(rect)` on mouseup, dismisses
-- [ ] Create `ui/components/CaptureList.tsx` — scrollable list of captures (most recent first) from active project's `captures` array
-- [ ] Create `ui/components/CaptureCard.tsx` — single capture: filename, URL path, notes text field (auto-saves on blur/debounce via `updateCapture`), placeholder for category picker (wired in Phase 4)
-- [ ] Create `ui/components/FileDropZone.tsx` — accepts dragged image files, reads as data URL via `FileReader`, calls `dropFile(dataUrl, originalName)` action
-- [ ] Verify: extension loads, icon click shows panel, "Take Screenshot" triggers overlay, capture appears in list
-- [ ] 🔄 Handoff
+- [x] Wire `content-script/index.ts` — `connectStore(config)`, `initializeShadowMount(<App />)`, subscribe to `active` for show/hide, inject panel stylesheet into shadow root
+- [x] Create panel stylesheet — CSS for panel positioning (fixed, top-right, 380px wide), tabs, capture cards, form controls; injected as `<style>` in shadow root
+- [x] Create `ui/App.tsx` — root component: `useCrannReady` gate, tab switcher (Capture / Taxonomy), project selector in header, close button, first-run "Create your first project" form
+- [x] Create `ui/components/ProjectSelector.tsx` — dropdown of existing projects + "New Project" option; calls `createProject` / `selectProject` actions
+- [x] Create `ui/components/CaptureView.tsx` — "Take Screenshot" button (triggers `isSelecting` state), file drop zone area, capture list; conditionally renders `RegionSelectionOverlay`
+- [x] Create `ui/components/RegionSelectionOverlay.tsx` — full-viewport overlay, semi-transparent background, crosshair cursor, click-drag rectangle with visual cutout, captures `devicePixelRatio`, fires `captureRegion(rect)` on mouseup, dismisses
+- [x] Create `ui/components/CaptureList.tsx` — scrollable list of captures (most recent first) from active project's `captures` array
+- [x] Create `ui/components/CaptureCard.tsx` — single capture: filename, URL path, notes text field (auto-saves on blur/debounce via `updateCapture`), placeholder for category picker (wired in Phase 4)
+- [x] Create `ui/components/FileDropZone.tsx` — accepts dragged image files, reads as data URL via `FileReader`, calls `dropFile(dataUrl, originalName)` action
+- [x] Verify: extension loads, icon click shows panel, "Take Screenshot" triggers overlay, capture appears in list
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 
