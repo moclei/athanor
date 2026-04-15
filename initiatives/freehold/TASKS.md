@@ -25,7 +25,7 @@
 - [x] Create `config.ts` — full Crann config with `active` (Scope.Agent), `activeProjectId` (Persist.Local), `projects` (Persist.Local), and all 10 RPC action stubs (createProject, selectProject, deleteProject, captureRegion, dropFile, updateCapture, addTaxonomyNode, renameTaxonomyNode, deleteTaxonomyNode, moveTaxonomyNode)
 - [x] Create `service-worker/capture.ts` — `captureVisibleTab()` + OffscreenCanvas cropping + `blobToDataUrl()` conversion (based on spike result from Phase 1)
 - [x] Create `service-worker/downloads.ts` — `writeScreenshot(projectSlug, filename, dataUrl)` and `writeProjectJson(projectSlug, projectData)` using `chrome.downloads.download()` with `conflictAction: 'overwrite'`; filename slug generation helper (`slugify` and `buildCaptureFilename`)
-- [ ] Wire `service-worker/index.ts` — `createStore(config)`, `chrome.action.onClicked` handler (inject content script or toggle active), implement all RPC action handlers (createProject, selectProject, deleteProject, captureRegion, dropFile, updateCapture), subscribe to project changes for Downloads write-through
+- [x] Wire `service-worker/index.ts` — `createStore(config)`, `chrome.action.onClicked` handler (inject content script or toggle active), implement all RPC action handlers (createProject, selectProject, deleteProject, captureRegion, dropFile, updateCapture), subscribe to project changes for Downloads write-through
 - [ ] Update `ui/hooks.ts` — confirm exports match the new config shape
 - [ ] Verify: build succeeds, service worker loads without errors in `chrome://extensions`
 - [ ] 🔄 Handoff
