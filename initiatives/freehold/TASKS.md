@@ -54,14 +54,14 @@
 
 **Session scope:** Build the taxonomy tree editor with drag-and-drop and the category picker for capture cards. Highest UI complexity phase. ~5 files.
 
-- [ ] Create `ui/taxonomy-defaults.ts` — default starter taxonomy (property management domain, 10 groups with children)
-- [ ] Create `ui/components/TaxonomyView.tsx` — taxonomy tab: "Add Group" button, renders `TaxonomyTree`
-- [ ] Create `ui/components/TaxonomyTree.tsx` — recursive tree renderer with `@dnd-kit/core` + `@dnd-kit/sortable` for drag-and-drop reorder and reparent; inline rename on double-click; delete with confirmation; context menu (⋮) for actions; calls `addTaxonomyNode`, `renameTaxonomyNode`, `deleteTaxonomyNode`, `moveTaxonomyNode` actions
-- [ ] Create `ui/components/CategoryPicker.tsx` — flat `<select>` with `<optgroup>` per top-level taxonomy node, entries formatted as child labels; calls `updateCapture({ taxonomyNodeId })` on change; "Uncategorized" option
-- [ ] Wire `CategoryPicker` into `CaptureCard.tsx` — replace placeholder with working picker
-- [ ] Wire taxonomy RPC action handlers in service-worker if not already complete (addTaxonomyNode, renameTaxonomyNode, deleteTaxonomyNode, moveTaxonomyNode)
-- [ ] Verify: taxonomy tab shows tree, nodes can be added/renamed/deleted/reordered, captures can be categorized via picker, category assignments persist
-- [ ] 🔄 Handoff
+- [x] Create `ui/taxonomy-defaults.ts` — default starter taxonomy (property management domain, 10 groups with children)
+- [x] Create `ui/components/TaxonomyView.tsx` — taxonomy tab: "Add Group" button, renders `TaxonomyTree`
+- [x] Create `ui/components/TaxonomyTree.tsx` — recursive tree renderer with `@dnd-kit/core` + `@dnd-kit/sortable` for drag-and-drop reorder and reparent; inline rename on double-click; delete with confirmation; context menu (⋮) for actions; calls `addTaxonomyNode`, `renameTaxonomyNode`, `deleteTaxonomyNode`, `moveTaxonomyNode` actions
+- [x] Create `ui/components/CategoryPicker.tsx` — flat `<select>` with `<optgroup>` per top-level taxonomy node, entries formatted as child labels; calls `updateCapture({ taxonomyNodeId })` on change; "Uncategorized" option
+- [x] Wire `CategoryPicker` into `CaptureCard.tsx` — replace placeholder with working picker
+- [x] Wire taxonomy RPC action handlers in service-worker if not already complete (addTaxonomyNode, renameTaxonomyNode, deleteTaxonomyNode, moveTaxonomyNode)
+- [x] Verify: taxonomy tab shows tree, nodes can be added/renamed/deleted/reordered, captures can be categorized via picker, category assignments persist
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 
