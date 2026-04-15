@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useCrannReady, useCrannState, useCrannActions } from './hooks';
 import { ProjectSelector } from './components/ProjectSelector';
 import { CaptureView } from './components/CaptureView';
+import { TaxonomyView } from './components/TaxonomyView';
 
 type Tab = 'capture' | 'taxonomy';
 
@@ -96,9 +97,7 @@ export function App() {
 
       <div className="fh-content">
         {activeTab === 'capture' && activeProjectId && <CaptureView />}
-        {activeTab === 'taxonomy' && (
-          <div className="fh-taxonomy-placeholder">Taxonomy editor — Phase 4</div>
-        )}
+        {activeTab === 'taxonomy' && activeProjectId && <TaxonomyView />}
       </div>
     </div>
   );

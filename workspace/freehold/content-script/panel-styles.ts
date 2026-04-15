@@ -329,14 +329,26 @@ export const panelStyles = /* css */ `
   box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.3);
 }
 
-/* ----------------------------------------------- Taxonomy placeholder */
-.fh-taxonomy-placeholder {
+/* ----------------------------------------------- Taxonomy view */
+.fh-taxonomy-view {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fh-taxonomy-header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.fh-taxonomy-empty {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  padding: 32px 16px;
   color: #aaa;
   font-size: 13px;
+  text-align: center;
 }
 
 /* -------------------------------------------------- Scrollbar */
