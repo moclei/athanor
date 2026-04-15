@@ -7,7 +7,7 @@
 - [x] Create `workspace/freehold/` directory structure (content-script/, service-worker/, ui/components/)
 - [x] Copy block files from `shadow-crann` recipe: shadow-dom-mount → content-script/, crann config template → config.ts, crann service-worker template → service-worker/index.ts, crann hooks template → ui/hooks.ts
 - [x] Create `package.json` with all dependencies (react, react-dom, crann, @dnd-kit/core, @dnd-kit/sortable, nanoid; dev: typescript, vite, @vitejs/plugin-react, @types/chrome, @types/react, @types/react-dom)
-- [ ] Create `tsconfig.json` extending root config
+- [x] Create `tsconfig.json` extending root config
 - [ ] Create `vite.config.ts` (content script + React bundle, IIFE) and `vite.config.scripts.ts` (service worker, ES module + manifest copy)
 - [ ] Create `manifest.json` with all permissions (scripting, activeTab, storage, unlimitedStorage, downloads, downloads.ui, host: `<all_urls>`), no `content_scripts`, no `default_popup`
 - [ ] Create `types.ts` — `ProjectData`, `Capture`, `TaxonomyNode`, `SelectionRect` interfaces
