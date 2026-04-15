@@ -33,6 +33,16 @@ async function injectContentScript(tabId: number) {
   });
 }
 
+store.subscribe(['projects'], async (state) => {
+  const activeId = state.activeProjectId;
+  if (!activeId) return;
+  const project = state.projects[activeId];
+  if (!project) return;
+
+  const { slugify, writeProjectJson } = await import('./downloads');
+  await writeProjectJson(slugify(project.name), project);
+});
+
 store.subscribe(['active'], (_state, changes, agentInfo) => {
   const tabId = agentInfo?.location?.tabId;
   if (tabId === undefined) return;
