@@ -174,24 +174,24 @@ feat(blocks): add content-script/shadow-dom-mount and service-worker/with-alarms
 
 ### Batch 4.1
 
-- [ ] Read `../lensor/src/settings/` directory (all files)
-- [ ] Read `athanor/blocks/popup-ui/react/BLOCK.md` for format reference
-- [ ] Create `blocks/settings-page/react/BLOCK.md` covering:
+- [x] Read `../lensor/src/settings/` directory (all files)
+- [x] Read `athanor/blocks/popup-ui/react/BLOCK.md` for format reference
+- [x] Create `blocks/settings-page/react/BLOCK.md` covering:
   - Settings page vs popup: full tab opened via `chrome.tabs.create`
   - `chrome.storage.sync` vs Crann (settings page typically doesn't need Crann — sync storage is simpler)
   - The `useStorage` hook and how to extend it for typed settings
   - Separate Vite entry point requirement (show what to add to `vite.config.ts`)
   - No `web_accessible_resources` entry needed — the settings page is opened as a tab via `chrome.tabs.create`, not injected into a web page
   - How to open the settings page from the extension (from service worker or Crann action)
-- [ ] Create `blocks/settings-page/react/settings.html` — minimal HTML; `<div id="root">`, script tag pointing to `settings.js`
-- [ ] Create `blocks/settings-page/react/index.tsx` — mounts `<SettingsApp />` to `#root`
-- [ ] Create `blocks/settings-page/react/useStorage.ts` — typed `chrome.storage.sync` hook:
+- [x] Create `blocks/settings-page/react/settings.html` — minimal HTML; `<div id="root">`, script tag pointing to `settings.js`
+- [x] Create `blocks/settings-page/react/index.tsx` — mounts `<SettingsApp />` to `#root`
+- [x] Create `blocks/settings-page/react/useStorage.ts` — typed `chrome.storage.sync` hook:
   - `useStorage<T>(key: string, defaultValue: T): [T, (value: T) => void]`
   - Reads on mount, listens for external changes, writes on setter call
-- [ ] Create `blocks/settings-page/react/SettingsApp.tsx` — minimal scaffold:
+- [x] Create `blocks/settings-page/react/SettingsApp.tsx` — minimal scaffold:
   - Simple layout with `// TODO: add your settings fields here` anchors
   - No Lensor-specific UI
-- [ ] Run `tsc --noEmit` from athanor root — fix any TS errors
+- [x] Run `tsc --noEmit` from athanor root — fix any TS errors
 
 ### Commit
 ```
