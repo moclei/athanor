@@ -1,23 +1,27 @@
 /**
- * Shadow DOM mount for Freehold.
- * Copied from block: content-script/shadow-dom-mount
+ * Freehold content script entry point.
  *
- * Mounts a React application inside a closed Shadow DOM attached to a host
- * <div> appended to document.body. The host covers the full viewport and
- * toggles visibility via CSS — it is never removed from the DOM so React
- * state is preserved across hide/show cycles.
+ * Connects to the Crann store, mounts the React UI inside a closed shadow DOM,
+ * and subscribes to `active` state to show/hide the panel.
  */
 
 import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
+import { connectStore } from 'crann';
+import { config } from '../config';
+import { App } from '../ui/App';
+import { panelStyles } from './panel-styles';
+
+// ---------------------------------------------------------------------------
+// Shadow DOM mount utility
+// ---------------------------------------------------------------------------
 
 export interface ShadowMountHandle {
   show(): void;
   hide(): void;
   destroy(): void;
+  shadowRoot: ShadowRoot;
 }
-
-const DEFAULT_CONTAINER_ID = '__freehold-shadow-root__';
 
 const HOST_STYLES: Partial<CSSStyleDeclaration> = {
   position: 'fixed',
@@ -32,20 +36,21 @@ const HOST_STYLES: Partial<CSSStyleDeclaration> = {
   visibility: 'visible',
 };
 
-function applyStyles(el: HTMLElement, styles: Partial<CSSStyleDeclaration>): void {
+function applyStyles(
+  el: HTMLElement,
+  styles: Partial<CSSStyleDeclaration>,
+): void {
   Object.assign(el.style, styles);
 }
 
 export function initializeShadowMount(
   component: React.ReactNode,
-  options?: { containerId?: string }
+  options?: { containerId?: string; stylesheet?: string },
 ): ShadowMountHandle {
-  const containerId = options?.containerId ?? DEFAULT_CONTAINER_ID;
+  const containerId = options?.containerId ?? '__freehold-shadow-root__';
 
   const existing = document.getElementById(containerId);
-  if (existing) {
-    existing.remove();
-  }
+  if (existing) existing.remove();
 
   const host = document.createElement('div');
   host.id = containerId;
@@ -54,8 +59,11 @@ export function initializeShadowMount(
 
   const shadowRoot = host.attachShadow({ mode: 'closed' });
 
-  const styleSlot = document.createElement('div');
-  shadowRoot.appendChild(styleSlot);
+  if (options?.stylesheet) {
+    const style = document.createElement('style');
+    style.textContent = options.stylesheet;
+    shadowRoot.appendChild(style);
+  }
 
   const uiRoot = document.createElement('div');
   uiRoot.style.height = '100%';
@@ -75,5 +83,30 @@ export function initializeShadowMount(
       root.unmount();
       host.remove();
     },
+    shadowRoot,
   };
 }
+
+// ---------------------------------------------------------------------------
+// Crann agent wiring
+// ---------------------------------------------------------------------------
+
+const agent = connectStore(config);
+
+agent.onReady(() => {
+  const handle = initializeShadowMount(
+    React.createElement(App),
+    { containerId: '__freehold__', stylesheet: panelStyles },
+  );
+
+  // Start hidden — the service worker sets `active: true` after injection
+  handle.hide();
+
+  agent.subscribe(['active'], (changes) => {
+    if (changes.active === true) {
+      handle.show();
+    } else if (changes.active === false) {
+      handle.hide();
+    }
+  });
+});
