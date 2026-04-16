@@ -110,6 +110,13 @@ export const panelStyles = /* css */ `
   outline-offset: -2px;
 }
 
+/* -------------------------------------------- Fixed capture toolbar */
+.fh-capture-toolbar {
+  padding: 10px 14px;
+  border-bottom: 1px solid #e5e5e5;
+  flex-shrink: 0;
+}
+
 /* --------------------------------------------------- Tab content area */
 .fh-content {
   flex: 1;
@@ -351,7 +358,19 @@ export const panelStyles = /* css */ `
 
 .fh-taxonomy-header {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.fh-taxonomy-header-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.fh-btn--small {
+  padding: 4px 8px;
+  font-size: 11px;
 }
 
 .fh-taxonomy-empty {

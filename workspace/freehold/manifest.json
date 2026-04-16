@@ -15,8 +15,7 @@
     "activeTab",
     "storage",
     "unlimitedStorage",
-    "downloads",
-    "downloads.ui"
+    "downloads"
   ],
   "host_permissions": [
     "<all_urls>"

@@ -1,6 +1,4 @@
-import type { ProjectData } from '../types';
-
-export function slugify(text: string): string {
+function slugify(text: string): string {
   return text
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
@@ -24,26 +22,14 @@ export function buildCaptureFilename(captureIndex: number, taxonomyPath: string[
 }
 
 export async function writeScreenshot(
-  projectSlug: string,
+  projectName: string,
   filename: string,
   dataUrl: string,
 ): Promise<number> {
+  const projectSlug = slugify(projectName);
   return chrome.downloads.download({
     url: dataUrl,
     filename: `freehold/${projectSlug}/screenshots/${filename}`,
-    conflictAction: 'overwrite',
-  });
-}
-
-export async function writeProjectJson(
-  projectSlug: string,
-  projectData: ProjectData,
-): Promise<number> {
-  const json = JSON.stringify(projectData, null, 2);
-  const dataUrl = `data:application/json;base64,${btoa(json)}`;
-  return chrome.downloads.download({
-    url: dataUrl,
-    filename: `freehold/${projectSlug}/project.json`,
     conflictAction: 'overwrite',
   });
 }

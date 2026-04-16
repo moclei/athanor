@@ -9,6 +9,8 @@ export function TaxonomyView() {
 
   const [isAdding, setIsAdding] = useState(false);
   const [newGroupLabel, setNewGroupLabel] = useState('');
+  const [expandAll, setExpandAll] = useState(false);
+  const [expandGeneration, setExpandGeneration] = useState(0);
 
   const activeProject = activeProjectId ? projects[activeProjectId] : undefined;
   const taxonomy = activeProject?.taxonomy ?? [];
@@ -22,6 +24,16 @@ export function TaxonomyView() {
     setIsAdding(false);
   }
 
+  function handleExpandAll() {
+    setExpandAll(true);
+    setExpandGeneration((g) => g + 1);
+  }
+
+  function handleCollapseAll() {
+    setExpandAll(false);
+    setExpandGeneration((g) => g + 1);
+  }
+
   return (
     <div className="fh-taxonomy-view">
       <div className="fh-taxonomy-header">
@@ -31,6 +43,16 @@ export function TaxonomyView() {
         >
           {isAdding ? 'Cancel' : '+ Add Group'}
         </button>
+        {taxonomy.length > 0 && (
+          <div className="fh-taxonomy-header-actions">
+            <button className="fh-btn fh-btn--secondary fh-btn--small" onClick={handleExpandAll}>
+              Expand All
+            </button>
+            <button className="fh-btn fh-btn--secondary fh-btn--small" onClick={handleCollapseAll}>
+              Collapse All
+            </button>
+          </div>
+        )}
       </div>
 
       {isAdding && (
@@ -61,7 +83,13 @@ export function TaxonomyView() {
           No taxonomy groups yet. Add a group to get started.
         </div>
       ) : (
-        <TaxonomyTree nodes={taxonomy} parentId={null} depth={0} />
+        <TaxonomyTree
+          nodes={taxonomy}
+          parentId={null}
+          depth={0}
+          expandAll={expandAll}
+          expandGeneration={expandGeneration}
+        />
       )}
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -19,9 +19,11 @@ interface TreeProps {
   nodes: TaxonomyNode[];
   parentId: string | null;
   depth: number;
+  expandAll?: boolean;
+  expandGeneration?: number;
 }
 
-export function TaxonomyTree({ nodes, parentId, depth }: TreeProps) {
+export function TaxonomyTree({ nodes, parentId, depth, expandAll, expandGeneration }: TreeProps) {
   const { moveTaxonomyNode } = useCrannActions();
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
@@ -51,7 +53,13 @@ export function TaxonomyTree({ nodes, parentId, depth }: TreeProps) {
       <SortableContext items={ids} strategy={verticalListSortingStrategy}>
         <div className="fh-tree-level" data-depth={depth}>
           {nodes.map((node) => (
-            <TaxonomyTreeNode key={node.id} node={node} depth={depth} />
+            <TaxonomyTreeNode
+              key={node.id}
+              node={node}
+              depth={depth}
+              expandAll={expandAll}
+              expandGeneration={expandGeneration}
+            />
           ))}
         </div>
       </SortableContext>
@@ -62,15 +70,23 @@ export function TaxonomyTree({ nodes, parentId, depth }: TreeProps) {
 interface NodeProps {
   node: TaxonomyNode;
   depth: number;
+  expandAll?: boolean;
+  expandGeneration?: number;
 }
 
-function TaxonomyTreeNode({ node, depth }: NodeProps) {
+function TaxonomyTreeNode({ node, depth, expandAll, expandGeneration }: NodeProps) {
   const { addTaxonomyNode, renameTaxonomyNode, deleteTaxonomyNode, moveTaxonomyNode } =
     useCrannActions();
   const projects = useCrannState((s) => s.projects);
   const [activeProjectId] = useCrannState('activeProjectId');
 
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    if (expandGeneration !== undefined) {
+      setExpanded(!!expandAll);
+    }
+  }, [expandGeneration]);
   const [isEditing, setIsEditing] = useState(false);
   const [editLabel, setEditLabel] = useState(node.label);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -270,7 +286,13 @@ function TaxonomyTreeNode({ node, depth }: NodeProps) {
       )}
 
       {expanded && hasChildren && (
-        <TaxonomyTree nodes={node.children} parentId={node.id} depth={depth + 1} />
+        <TaxonomyTree
+          nodes={node.children}
+          parentId={node.id}
+          depth={depth + 1}
+          expandAll={expandAll}
+          expandGeneration={expandGeneration}
+        />
       )}
     </div>
   );
