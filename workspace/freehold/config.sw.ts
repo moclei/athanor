@@ -208,6 +208,26 @@ export const config = createConfig({
       },
     },
 
+    deleteCapture: {
+      handler: async (ctx, captureId: string) => {
+        const activeProject = ctx.state.projects[ctx.state.activeProjectId!];
+        if (!activeProject) return;
+
+        const idx = activeProject.captures.findIndex((c: Capture) => c.id === captureId);
+        if (idx === -1) return;
+
+        await imageStore.remove(captureId);
+
+        const captures = [
+          ...activeProject.captures.slice(0, idx),
+          ...activeProject.captures.slice(idx + 1),
+        ];
+        const updatedProject: ProjectData = { ...activeProject, captures };
+        const projects = { ...ctx.state.projects, [activeProject.id]: updatedProject };
+        await ctx.setState({ projects });
+      },
+    },
+
     updateCapture: {
       handler: async (ctx, args: { captureId: string; taxonomyNodeId?: string | null; notes?: string }) => {
         const activeProject = ctx.state.projects[ctx.state.activeProjectId!];
