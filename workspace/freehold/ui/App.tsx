@@ -44,7 +44,7 @@ export function App({ shadowContainer }: AppProps) {
     shadowContainer.style.visibility = active ? 'visible' : 'hidden';
   }, [active, shadowContainer]);
 
-  const { captureRegion } = useCrannActions();
+  const { captureRegion, openGallery } = useCrannActions();
 
   const startSelection = useCallback(() => setIsSelecting(true), []);
 
@@ -148,10 +148,17 @@ export function App({ shadowContainer }: AppProps) {
           {activeTab === 'capture' && activeProjectId && (
             <div className="fh-capture-toolbar">
               <button
-                className="fh-btn fh-btn--primary fh-btn--full"
+                className="fh-btn fh-btn--primary fh-toolbar-primary"
                 onClick={startSelection}
               >
                 Take Screenshot
+              </button>
+              <button
+                className="fh-btn fh-btn--secondary"
+                onClick={() => openGallery()}
+                title="Open gallery in a new tab"
+              >
+                Gallery
               </button>
             </div>
           )}

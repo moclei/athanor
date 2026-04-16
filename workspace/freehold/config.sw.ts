@@ -7,10 +7,10 @@
  */
 import { createConfig, Scope, Persist } from 'crann';
 import { nanoid } from 'nanoid';
-import { buildCaptureFilename, writeScreenshot } from './service-worker/downloads';
-
+import { buildCaptureFilename } from './service-worker/filename';
 import { captureAndCrop } from './service-worker/capture';
 import { buildDefaultTaxonomy } from './ui/taxonomy-defaults';
+import * as imageStore from './image-store';
 import type { ProjectData, Capture, SelectionRect, TaxonomyNode } from './types';
 
 // ── Tree helpers ──────────────────────────────────────────────────────────
@@ -127,9 +127,13 @@ export const config = createConfig({
     deleteProject: {
       handler: async (ctx, projectId: string) => {
         const projects = { ...ctx.state.projects };
+        const removed = projects[projectId];
         delete projects[projectId];
         const activeProjectId =
           ctx.state.activeProjectId === projectId ? null : ctx.state.activeProjectId;
+        if (removed) {
+          await imageStore.removeMany(removed.captures.map((c: Capture) => c.id));
+        }
         await ctx.setState({ projects, activeProjectId });
       },
     },
@@ -143,15 +147,16 @@ export const config = createConfig({
         if (tabId === undefined) return;
 
         const tab = await chrome.tabs.get(tabId);
-        const { dataUrl } = await captureAndCrop(tabId, rect);
+        const { blob } = await captureAndCrop(tabId, rect);
 
         const captureIndex = activeProject.captures.length + 1;
         const filename = buildCaptureFilename(captureIndex, []);
+        const captureId = nanoid();
 
-        await writeScreenshot(activeProject.name, filename, dataUrl);
+        await imageStore.put(captureId, blob);
 
         const capture: Capture = {
-          id: nanoid(),
+          id: captureId,
           timestamp: new Date().toISOString(),
           url: tab.url ?? '',
           pageTitle: tab.title ?? '',
@@ -179,11 +184,13 @@ export const config = createConfig({
 
         const captureIndex = activeProject.captures.length + 1;
         const filename = buildCaptureFilename(captureIndex, []);
+        const captureId = nanoid();
 
-        await writeScreenshot(activeProject.name, filename, args.dataUrl);
+        const blob = await (await fetch(args.dataUrl)).blob();
+        await imageStore.put(captureId, blob);
 
         const capture: Capture = {
-          id: nanoid(),
+          id: captureId,
           timestamp: new Date().toISOString(),
           url: tab?.url ?? '',
           pageTitle: tab?.title ?? '',
@@ -196,6 +203,26 @@ export const config = createConfig({
           ...activeProject,
           captures: [...activeProject.captures, capture],
         };
+        const projects = { ...ctx.state.projects, [activeProject.id]: updatedProject };
+        await ctx.setState({ projects });
+      },
+    },
+
+    deleteCapture: {
+      handler: async (ctx, captureId: string) => {
+        const activeProject = ctx.state.projects[ctx.state.activeProjectId!];
+        if (!activeProject) return;
+
+        const idx = activeProject.captures.findIndex((c: Capture) => c.id === captureId);
+        if (idx === -1) return;
+
+        await imageStore.remove(captureId);
+
+        const captures = [
+          ...activeProject.captures.slice(0, idx),
+          ...activeProject.captures.slice(idx + 1),
+        ];
+        const updatedProject: ProjectData = { ...activeProject, captures };
         const projects = { ...ctx.state.projects, [activeProject.id]: updatedProject };
         await ctx.setState({ projects });
       },
@@ -287,6 +314,27 @@ export const config = createConfig({
         const updatedProject: ProjectData = { ...activeProject, taxonomy };
         const projects = { ...ctx.state.projects, [activeProject.id]: updatedProject };
         await ctx.setState({ projects });
+      },
+    },
+
+    openGallery: {
+      handler: async (_ctx) => {
+        const galleryUrl = chrome.runtime.getURL('gallery.html');
+        // getContexts returns tabs running our own extension pages without
+        // needing the "tabs" permission or extra host permissions.
+        const contexts = await chrome.runtime.getContexts({
+          contextTypes: [chrome.runtime.ContextType.TAB],
+          documentUrls: [galleryUrl],
+        });
+        const existing = contexts[0];
+        if (existing?.tabId !== undefined && existing.tabId !== -1) {
+          await chrome.tabs.update(existing.tabId, { active: true });
+          if (existing.windowId !== undefined && existing.windowId !== -1) {
+            await chrome.windows.update(existing.windowId, { focused: true });
+          }
+          return;
+        }
+        await chrome.tabs.create({ url: galleryUrl, active: true });
       },
     },
   },

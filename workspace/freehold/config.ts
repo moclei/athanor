@@ -53,6 +53,9 @@ export const config = createConfig({
         _args: { captureId: string; taxonomyNodeId?: string | null; notes?: string },
       ) => {},
     },
+    deleteCapture: {
+      handler: async (_ctx, _captureId: string) => {},
+    },
     addTaxonomyNode: {
       handler: async (_ctx, _args: { parentId: string | null; label: string }) => {},
     },
@@ -67,6 +70,9 @@ export const config = createConfig({
         _ctx,
         _args: { nodeId: string; newParentId: string | null; newIndex: number },
       ) => {},
+    },
+    openGallery: {
+      handler: async (_ctx) => {},
     },
   },
 });

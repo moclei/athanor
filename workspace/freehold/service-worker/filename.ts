@@ -1,4 +1,4 @@
-function slugify(text: string): string {
+export function slugify(text: string): string {
   return text
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
@@ -7,10 +7,15 @@ function slugify(text: string): string {
 }
 
 /**
- * Build a capture filename: `{NNN}-{slug}.png`.
+ * Build a stable capture filename: `{NNN}-{slug}.png`.
+ *
  * captureIndex is 1-based, padded to 3 digits.
  * taxonomyPath is the label chain from root to assigned node, kebab-cased.
  * Empty path → 'uncategorized'.
+ *
+ * This name is stored on the Capture record and stays stable once assigned.
+ * Export-time renaming (based on current taxonomy) is handled separately in
+ * the gallery export flow.
  */
 export function buildCaptureFilename(captureIndex: number, taxonomyPath: string[]): string {
   const counter = String(captureIndex).padStart(3, '0');
@@ -19,17 +24,4 @@ export function buildCaptureFilename(captureIndex: number, taxonomyPath: string[
       ? taxonomyPath.map((label) => slugify(label)).join('-')
       : 'uncategorized';
   return `${counter}-${slug}.png`;
-}
-
-export async function writeScreenshot(
-  projectName: string,
-  filename: string,
-  dataUrl: string,
-): Promise<number> {
-  const projectSlug = slugify(projectName);
-  return chrome.downloads.download({
-    url: dataUrl,
-    filename: `freehold/${projectSlug}/screenshots/${filename}`,
-    conflictAction: 'overwrite',
-  });
 }
