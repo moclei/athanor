@@ -7,10 +7,10 @@
  */
 import { createConfig, Scope, Persist } from 'crann';
 import { nanoid } from 'nanoid';
-import { buildCaptureFilename, writeScreenshot } from './service-worker/downloads';
-
+import { buildCaptureFilename } from './service-worker/filename';
 import { captureAndCrop } from './service-worker/capture';
 import { buildDefaultTaxonomy } from './ui/taxonomy-defaults';
+import * as imageStore from './image-store';
 import type { ProjectData, Capture, SelectionRect, TaxonomyNode } from './types';
 
 // ── Tree helpers ──────────────────────────────────────────────────────────
@@ -127,9 +127,13 @@ export const config = createConfig({
     deleteProject: {
       handler: async (ctx, projectId: string) => {
         const projects = { ...ctx.state.projects };
+        const removed = projects[projectId];
         delete projects[projectId];
         const activeProjectId =
           ctx.state.activeProjectId === projectId ? null : ctx.state.activeProjectId;
+        if (removed) {
+          await imageStore.removeMany(removed.captures.map((c: Capture) => c.id));
+        }
         await ctx.setState({ projects, activeProjectId });
       },
     },
@@ -143,15 +147,16 @@ export const config = createConfig({
         if (tabId === undefined) return;
 
         const tab = await chrome.tabs.get(tabId);
-        const { dataUrl } = await captureAndCrop(tabId, rect);
+        const { blob } = await captureAndCrop(tabId, rect);
 
         const captureIndex = activeProject.captures.length + 1;
         const filename = buildCaptureFilename(captureIndex, []);
+        const captureId = nanoid();
 
-        await writeScreenshot(activeProject.name, filename, dataUrl);
+        await imageStore.put(captureId, blob);
 
         const capture: Capture = {
-          id: nanoid(),
+          id: captureId,
           timestamp: new Date().toISOString(),
           url: tab.url ?? '',
           pageTitle: tab.title ?? '',
@@ -179,11 +184,13 @@ export const config = createConfig({
 
         const captureIndex = activeProject.captures.length + 1;
         const filename = buildCaptureFilename(captureIndex, []);
+        const captureId = nanoid();
 
-        await writeScreenshot(activeProject.name, filename, args.dataUrl);
+        const blob = await (await fetch(args.dataUrl)).blob();
+        await imageStore.put(captureId, blob);
 
         const capture: Capture = {
-          id: nanoid(),
+          id: captureId,
           timestamp: new Date().toISOString(),
           url: tab?.url ?? '',
           pageTitle: tab?.title ?? '',

@@ -1,23 +1,13 @@
 import type { SelectionRect } from '../types';
 
-async function blobToDataUrl(blob: Blob): Promise<string> {
-  const buffer = await blob.arrayBuffer();
-  const bytes = new Uint8Array(buffer);
-  let binary = '';
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]!);
-  }
-  return `data:${blob.type};base64,${btoa(binary)}`;
-}
-
 /**
- * Full capture pipeline: captureVisibleTab → crop via OffscreenCanvas → data URL.
+ * Full capture pipeline: captureVisibleTab → crop via OffscreenCanvas → PNG Blob.
  * Resolves the calling tab's window to ensure the correct viewport is captured.
  */
 export async function captureAndCrop(
   tabId: number,
   rect: SelectionRect,
-): Promise<{ dataUrl: string }> {
+): Promise<{ blob: Blob }> {
   const tab = await chrome.tabs.get(tabId);
   const screenshotDataUrl = await chrome.tabs.captureVisibleTab(tab.windowId, {
     format: 'png',
@@ -40,8 +30,7 @@ export async function captureAndCrop(
   ctx.drawImage(bitmap, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
   bitmap.close();
 
-  const croppedBlob = await canvas.convertToBlob({ type: 'image/png' });
-  const dataUrl = await blobToDataUrl(croppedBlob);
+  const blob = await canvas.convertToBlob({ type: 'image/png' });
 
-  return { dataUrl };
+  return { blob };
 }
