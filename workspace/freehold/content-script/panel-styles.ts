@@ -112,9 +112,15 @@ export const panelStyles = /* css */ `
 
 /* -------------------------------------------- Fixed capture toolbar */
 .fh-capture-toolbar {
+  display: flex;
+  gap: 8px;
   padding: 10px 14px;
   border-bottom: 1px solid #e5e5e5;
   flex-shrink: 0;
+}
+
+.fh-toolbar-primary {
+  flex: 1;
 }
 
 /* --------------------------------------------------- Tab content area */

@@ -68,6 +68,9 @@ export const config = createConfig({
         _args: { nodeId: string; newParentId: string | null; newIndex: number },
       ) => {},
     },
+    openGallery: {
+      handler: async (_ctx) => {},
+    },
   },
 });
 

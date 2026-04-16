@@ -1,0 +1,105 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  background: #fafafa;
+  color: #1a1a1a;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+#root {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.fhg-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 24px;
+  background: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.fhg-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.fhg-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.fhg-project-select {
+  padding: 6px 10px;
+  border: 1px solid #d4d4d4;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  min-width: 200px;
+}
+
+.fhg-header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.fhg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.fhg-btn--secondary {
+  background: #fff;
+  border-color: #d4d4d4;
+  color: #333;
+}
+.fhg-btn--secondary:hover {
+  background: #f5f5f5;
+  border-color: #bbb;
+}
+
+.fhg-body {
+  flex: 1;
+  padding: 24px;
+}
+
+.fhg-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  color: #888;
+  font-size: 13px;
+}
+
+.fhg-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  color: #aaa;
+  font-size: 13px;
+}

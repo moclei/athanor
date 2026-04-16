@@ -296,6 +296,27 @@ export const config = createConfig({
         await ctx.setState({ projects });
       },
     },
+
+    openGallery: {
+      handler: async (_ctx) => {
+        const galleryUrl = chrome.runtime.getURL('gallery.html');
+        // getContexts returns tabs running our own extension pages without
+        // needing the "tabs" permission or extra host permissions.
+        const contexts = await chrome.runtime.getContexts({
+          contextTypes: [chrome.runtime.ContextType.TAB],
+          documentUrls: [galleryUrl],
+        });
+        const existing = contexts[0];
+        if (existing?.tabId !== undefined && existing.tabId !== -1) {
+          await chrome.tabs.update(existing.tabId, { active: true });
+          if (existing.windowId !== undefined && existing.windowId !== -1) {
+            await chrome.windows.update(existing.windowId, { focused: true });
+          }
+          return;
+        }
+        await chrome.tabs.create({ url: galleryUrl, active: true });
+      },
+    },
   },
 });
 

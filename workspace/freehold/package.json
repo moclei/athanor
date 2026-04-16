@@ -4,8 +4,9 @@
   "private": true,
   "description": "Structured competitive audit capture for SaaS products.",
   "scripts": {
-    "build": "vite build && vite build --config vite.config.scripts.ts",
+    "build": "vite build && vite build --config vite.config.gallery.ts && vite build --config vite.config.scripts.ts",
     "build:content": "vite build",
+    "build:gallery": "vite build --config vite.config.gallery.ts",
     "build:sw": "vite build --config vite.config.scripts.ts",
     "typecheck": "tsc --noEmit"
   },
