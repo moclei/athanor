@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Freehold",
+  "version": "0.0.1",
+  "description": "Structured competitive audit capture for SaaS products.",
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Freehold"
+  },
+  "permissions": [
+    "scripting",
+    "activeTab",
+    "storage",
+    "unlimitedStorage",
+    "downloads"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ]
+}

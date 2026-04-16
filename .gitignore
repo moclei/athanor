@@ -1,5 +1,6 @@
 # Workspace extensions are gitignored — each is a standalone local artifact
-workspace/
+workspace/*
+!workspace/freehold/
 
 # Dependencies
 node_modules/

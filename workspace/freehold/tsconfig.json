@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": ".",
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "types": ["chrome"]
+  },
+  "include": ["./**/*"],
+  "exclude": ["node_modules", "dist"]
+}
