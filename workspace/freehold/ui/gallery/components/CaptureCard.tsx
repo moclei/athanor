@@ -8,7 +8,7 @@ import { GalleryCategoryPicker } from './GalleryCategoryPicker';
 interface Props {
   capture: Capture;
   taxonomy: TaxonomyNode[];
-  onOpen?: (capture: Capture) => void;
+  onOpen?: ((capture: Capture) => void) | undefined;
 }
 
 function hostnameOf(url: string): string {

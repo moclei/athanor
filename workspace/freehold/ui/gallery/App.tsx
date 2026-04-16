@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useCrannReady, useCrannState, useCrannActions } from '../hooks';
 import { CaptureGrid } from './components/CaptureGrid';
 import { CaptureModal } from './components/CaptureModal';
+import { ExportButton } from './components/ExportButton';
+import { MigrateButton } from './components/MigrateButton';
 import type { Capture } from '../../types';
 
 export function GalleryApp() {
@@ -52,6 +54,8 @@ export function GalleryApp() {
           )}
         </div>
         <div className="fhg-header-actions">
+          <MigrateButton projects={projects} />
+          <ExportButton project={activeProject} />
           <button
             type="button"
             className="fhg-btn fhg-btn--secondary"
@@ -60,7 +64,6 @@ export function GalleryApp() {
           >
             Refresh
           </button>
-          {/* Export / Import land in the next chunks */}
         </div>
       </header>
       <main className="fhg-body">

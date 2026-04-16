@@ -56,7 +56,45 @@ html, body {
 
 .fhg-header-actions {
   display: flex;
+  align-items: center;
   gap: 8px;
+}
+
+.fhg-export-wrap,
+.fhg-migrate-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fhg-btn--primary {
+  background: #2d7dfb;
+  border-color: #2d7dfb;
+  color: #fff;
+}
+.fhg-btn--primary:hover:not(:disabled) {
+  background: #1f6ee0;
+  border-color: #1f6ee0;
+}
+
+.fhg-export-msg {
+  font-size: 12px;
+  color: #555;
+  max-width: 360px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fhg-export-msg--ok {
+  color: #2c7a3a;
+}
+.fhg-export-msg--err {
+  color: #b3393d;
+}
+
+.fhg-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .fhg-btn {
@@ -466,6 +504,70 @@ html, body {
   justify-content: flex-end;
   padding-top: 12px;
   border-top: 1px solid #ececec;
+}
+.fhg-modal-actions--split {
+  justify-content: space-between;
+  padding: 12px 18px;
+  margin-top: 0;
+}
+
+/* --- Migrate confirm modal ------------------------------------------ */
+
+.fhg-modal--small {
+  width: min(720px, 100%);
+  max-height: min(80vh, 720px);
+}
+
+.fhg-migrate-body {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.fhg-migrate-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.fhg-migrate-table th,
+.fhg-migrate-table td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.fhg-migrate-table th {
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #888;
+  background: #fafafa;
+}
+.fhg-migrate-table .fhg-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.fhg-migrate-table code {
+  font-size: 12px;
+  background: #f3f3f3;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+.fhg-migrate-muted {
+  color: #888;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.fhg-migrate-muted code {
+  font-size: 12px;
+  background: #f3f3f3;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin: 0 2px;
 }
 
 @media (max-width: 760px) {

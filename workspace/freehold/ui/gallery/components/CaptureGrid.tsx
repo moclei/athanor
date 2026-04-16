@@ -5,7 +5,7 @@ import { CaptureCard } from './CaptureCard';
 interface Props {
   captures: Capture[];
   taxonomy: TaxonomyNode[];
-  onCaptureOpen?: (capture: Capture) => void;
+  onCaptureOpen?: ((capture: Capture) => void) | undefined;
 }
 
 export function CaptureGrid({ captures, taxonomy, onCaptureOpen }: Props) {
