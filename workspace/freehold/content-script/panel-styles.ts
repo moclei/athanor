@@ -609,12 +609,38 @@ export const panelStyles = /* css */ `
 }
 
 .fh-cat-group-header {
-  padding: 4px 10px 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 5px 10px;
   font-size: 11px;
   font-weight: 600;
-  color: #888;
+  font-family: inherit;
+  color: #666;
+  text-align: left;
   text-transform: none;
   letter-spacing: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.fh-cat-group-header:hover {
+  background: #f4f4f4;
+  color: #333;
+}
+
+.fh-cat-chevron {
+  display: inline-block;
+  width: 8px;
+  font-size: 9px;
+  color: #aaa;
+  transform-origin: 50% 50%;
+  transition: transform 120ms ease;
+}
+.fh-cat-chevron--open {
+  transform: rotate(90deg);
+  color: #666;
 }
 
 .fh-cat-option {

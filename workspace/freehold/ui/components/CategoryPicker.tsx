@@ -20,6 +20,9 @@ export function CategoryPicker({ capture }: Props) {
   // no group has the inline form open.
   const [addingFor, setAddingFor] = useState<string | null>(null);
   const [addingLabel, setAddingLabel] = useState('');
+  // Which top-level groups are currently expanded in the popover. All start
+  // collapsed every time the popover opens.
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(() => new Set());
 
   const triggerRef = useRef<HTMLButtonElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -32,6 +35,16 @@ export function CategoryPicker({ capture }: Props) {
     setIsOpen(false);
     setAddingFor(null);
     setAddingLabel('');
+    setExpandedGroups(new Set());
+  }, []);
+
+  const toggleGroup = useCallback((groupId: string) => {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(groupId)) next.delete(groupId);
+      else next.add(groupId);
+      return next;
+    });
   }, []);
 
   // Outside-click closes the popover. Listener attached to the shadow root
@@ -104,8 +117,10 @@ export function CategoryPicker({ capture }: Props) {
             <CategoryGroup
               key={group.id}
               group={group}
+              isExpanded={expandedGroups.has(group.id)}
               addingFor={addingFor}
               addingLabel={addingLabel}
+              onToggle={toggleGroup}
               onSelect={handleSelectNode}
               onStartAdd={startAdd}
               onChangeAddLabel={setAddingLabel}
@@ -121,8 +136,10 @@ export function CategoryPicker({ capture }: Props) {
 
 interface GroupProps {
   group: TaxonomyNode;
+  isExpanded: boolean;
   addingFor: string | null;
   addingLabel: string;
+  onToggle: (groupId: string) => void;
   onSelect: (nodeId: string | null) => void;
   onStartAdd: (groupId: string) => void;
   onChangeAddLabel: (value: string) => void;
@@ -132,8 +149,10 @@ interface GroupProps {
 
 function CategoryGroup({
   group,
+  isExpanded,
   addingFor,
   addingLabel,
+  onToggle,
   onSelect,
   onStartAdd,
   onChangeAddLabel,
@@ -144,44 +163,61 @@ function CategoryGroup({
 
   return (
     <div className="fh-cat-group">
-      <div className="fh-cat-group-header">{group.label}</div>
-      {group.children.map((child) => (
-        <button
-          key={child.id}
-          type="button"
-          className="fh-cat-option"
-          onClick={() => onSelect(child.id)}
+      <button
+        type="button"
+        className="fh-cat-group-header"
+        aria-expanded={isExpanded}
+        onClick={() => onToggle(group.id)}
+      >
+        <span
+          className={`fh-cat-chevron${isExpanded ? ' fh-cat-chevron--open' : ''}`}
+          aria-hidden="true"
         >
-          {child.label}
-        </button>
-      ))}
-      {isAdding ? (
-        <input
-          type="text"
-          className="fh-cat-add-input"
-          autoFocus
-          value={addingLabel}
-          placeholder="New tag…"
-          onChange={(e) => onChangeAddLabel(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              void onCommitAdd(group.id);
-            } else if (e.key === 'Escape') {
-              e.preventDefault();
-              onCancelAdd();
-            }
-          }}
-          onBlur={onCancelAdd}
-        />
-      ) : (
-        <button
-          type="button"
-          className="fh-cat-add-row"
-          onClick={() => onStartAdd(group.id)}
-        >
-          + Add tag
-        </button>
+          ▸
+        </span>
+        {group.label}
+      </button>
+      {isExpanded && (
+        <>
+          {group.children.map((child) => (
+            <button
+              key={child.id}
+              type="button"
+              className="fh-cat-option"
+              onClick={() => onSelect(child.id)}
+            >
+              {child.label}
+            </button>
+          ))}
+          {isAdding ? (
+            <input
+              type="text"
+              className="fh-cat-add-input"
+              autoFocus
+              value={addingLabel}
+              placeholder="New tag…"
+              onChange={(e) => onChangeAddLabel(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  void onCommitAdd(group.id);
+                } else if (e.key === 'Escape') {
+                  e.preventDefault();
+                  onCancelAdd();
+                }
+              }}
+              onBlur={onCancelAdd}
+            />
+          ) : (
+            <button
+              type="button"
+              className="fh-cat-add-row"
+              onClick={() => onStartAdd(group.id)}
+            >
+              + Add tag
+            </button>
+          )}
+        </>
       )}
     </div>
   );
