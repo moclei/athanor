@@ -39,6 +39,12 @@ export const panelStyles = /* css */ `
   padding: 12px 14px;
   border-bottom: 1px solid #e5e5e5;
   flex-shrink: 0;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.fh-header:active {
+  cursor: grabbing;
 }
 
 .fh-header-left {

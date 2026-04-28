@@ -91,6 +91,11 @@ export const config = createConfig({
     scope: Scope.Agent,
   },
 
+  panelPosition: {
+    default: null as { top: number; left: number } | null,
+    scope: Scope.Agent,
+  },
+
   activeProjectId: {
     default: null as string | null,
     persist: Persist.Local,

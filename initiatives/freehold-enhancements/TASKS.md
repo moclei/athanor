@@ -15,14 +15,14 @@
 
 ### Feature 4 — Draggable panel
 
-- [ ] Add `panelPosition` state to `workspace/freehold/config.ts` — `{ default: null as { top: number; left: number } | null, scope: Scope.Agent }` (no `persist`)
-- [ ] Add the same `panelPosition` field to `workspace/freehold/config.sw.ts` (state schema parity)
-- [ ] In `workspace/freehold/ui/App.tsx`: read `panelPosition`; if non-null, apply `style={{ top, left, right: 'auto' }}` to `.fh-panel`
-- [ ] In `App.tsx`: add `onPointerDown` handler on `.fh-header` that ignores events whose target matches `button, select, input` (so close button, project selector, etc. keep working); use pointer-capture, track delta during `pointermove`, write final position to Crann on `pointerup`
-- [ ] Clamp new position so the panel stays at least partially on-screen (~80px horizontally, ~40px vertically)
-- [ ] Add to `workspace/freehold/content-script/panel-styles.ts`: `.fh-header { cursor: grab; touch-action: none; user-select: none; }` and `.fh-header:active { cursor: grabbing; }`
-- [ ] Verify build, manual test: drag works, close/project-select clicks still work, position persists across panel close/reopen in same tab, resets on page reload
-- [ ] Commit: `feat(freehold): draggable panel with per-tab position memory`
+- [x] Add `panelPosition` state to `workspace/freehold/config.ts` — `{ default: null as { top: number; left: number } | null, scope: Scope.Agent }` (no `persist`)
+- [x] Add the same `panelPosition` field to `workspace/freehold/config.sw.ts` (state schema parity)
+- [x] In `workspace/freehold/ui/App.tsx`: read `panelPosition`; if non-null, apply `style={{ top, left, right: 'auto' }}` to `.fh-panel`
+- [x] In `App.tsx`: add `onPointerDown` handler on `.fh-header` that ignores events whose target matches `button, select, input` (so close button, project selector, etc. keep working); use pointer-capture, track delta during `pointermove`, write final position to Crann on `pointerup`
+- [x] Clamp new position so the panel stays at least partially on-screen (~80px horizontally, ~40px vertically)
+- [x] Add to `workspace/freehold/content-script/panel-styles.ts`: `.fh-header { cursor: grab; touch-action: none; user-select: none; }` and `.fh-header:active { cursor: grabbing; }`
+- [x] Verify build (manual test deferred to user — no browser available in agent session)
+- [x] Commit: `feat(freehold): draggable panel with per-tab position memory`
 
 ### Feature 5 — Click-to-place selection (alternative to drag)
 
