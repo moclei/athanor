@@ -21,6 +21,11 @@ export const config = createConfig({
     scope: Scope.Agent,
   },
 
+  panelPosition: {
+    default: null as { top: number; left: number } | null,
+    scope: Scope.Agent,
+  },
+
   activeProjectId: {
     default: null as string | null,
     persist: Persist.Local,
@@ -58,6 +63,12 @@ export const config = createConfig({
     },
     addTaxonomyNode: {
       handler: async (_ctx, _args: { parentId: string | null; label: string }) => {},
+    },
+    quickAddTaxonomyAndAssign: {
+      handler: async (
+        _ctx,
+        _args: { parentId: string; label: string; captureId: string },
+      ) => {},
     },
     renameTaxonomyNode: {
       handler: async (_ctx, _args: { nodeId: string; label: string }) => {},

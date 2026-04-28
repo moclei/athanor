@@ -39,6 +39,12 @@ export const panelStyles = /* css */ `
   padding: 12px 14px;
   border-bottom: 1px solid #e5e5e5;
   flex-shrink: 0;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.fh-header:active {
+  cursor: grabbing;
 }
 
 .fh-header-left {
@@ -229,13 +235,6 @@ export const panelStyles = /* css */ `
 .fh-capture-card:hover {
   border-color: #d0d0d0;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-}
-
-.fh-capture-filename {
-  font-size: 12px;
-  font-weight: 600;
-  color: #333;
-  word-break: break-all;
 }
 
 .fh-capture-url {
@@ -559,22 +558,141 @@ export const panelStyles = /* css */ `
 }
 
 /* ---------------------------------------------- Category picker */
-.fh-category-picker {
-  width: 100%;
+.fh-cat-wrapper {
+  position: relative;
   margin-top: 6px;
-  padding: 4px 6px;
+}
+
+.fh-cat-trigger {
+  width: 100%;
+  padding: 5px 8px;
   font-size: 11px;
   font-family: inherit;
+  text-align: left;
   border: 1px solid #e0e0e0;
-  border-radius: 5px;
+  border-radius: 6px;
   background: #fff;
   color: #555;
   cursor: pointer;
-  appearance: auto;
+  transition: border-color 0.15s, background 0.15s;
 }
-.fh-category-picker:focus {
+.fh-cat-trigger:hover {
+  border-color: #c4c4c4;
+}
+.fh-cat-trigger:focus-visible {
   outline: none;
   border-color: #888;
+}
+
+.fh-cat-popover {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 4px 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 7px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  font-size: 12px;
+}
+
+.fh-cat-group {
+  padding: 4px 0;
+  border-top: 1px solid #f0f0f0;
+}
+.fh-cat-group:first-of-type {
+  border-top: 1px solid #ececec;
+}
+
+.fh-cat-group-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #666;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.fh-cat-group-header:hover {
+  background: #f4f4f4;
+  color: #333;
+}
+
+.fh-cat-chevron {
+  display: inline-block;
+  width: 8px;
+  font-size: 9px;
+  color: #aaa;
+  transform-origin: 50% 50%;
+  transition: transform 120ms ease;
+}
+.fh-cat-chevron--open {
+  transform: rotate(90deg);
+  color: #666;
+}
+
+.fh-cat-option {
+  display: block;
+  width: 100%;
+  padding: 5px 10px 5px 18px;
+  font-size: 12px;
+  font-family: inherit;
+  text-align: left;
+  border: none;
+  background: none;
+  color: #333;
+  cursor: pointer;
+  border-radius: 0;
+}
+.fh-cat-option:hover {
+  background: #f4f4f4;
+}
+.fh-cat-option--root {
+  padding-left: 10px;
+  color: #555;
+}
+
+.fh-cat-add-row {
+  display: block;
+  width: 100%;
+  padding: 5px 10px 5px 18px;
+  font-size: 11px;
+  font-family: inherit;
+  text-align: left;
+  border: none;
+  background: none;
+  color: #888;
+  cursor: pointer;
+}
+.fh-cat-add-row:hover {
+  background: #f4f4f4;
+  color: #555;
+}
+
+.fh-cat-add-input {
+  display: block;
+  width: calc(100% - 14px);
+  margin: 2px 7px 4px 14px;
+  padding: 4px 6px;
+  font-size: 12px;
+  font-family: inherit;
+  border: 1px solid #888;
+  border-radius: 5px;
+  outline: none;
+  background: #fff;
+  color: #333;
 }
 
 /* -------------------------------------------------- Scrollbar */

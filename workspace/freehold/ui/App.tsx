@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useCrannReady, useCrannState, useCrannActions } from './hooks';
 import { ShadowContainerContext } from './ShadowContainerContext';
 import { ProjectSelector } from './components/ProjectSelector';
@@ -6,6 +6,11 @@ import { CaptureView } from './components/CaptureView';
 import { TaxonomyView } from './components/TaxonomyView';
 import { RegionSelectionOverlay } from './components/RegionSelectionOverlay';
 import type { SelectionRect } from '../types';
+
+// Clamp values keep the panel reachable even after a window resize.
+const CLAMP_HORIZONTAL = 80;
+const CLAMP_VERTICAL = 40;
+const DEFAULT_PANEL_WIDTH = 380;
 
 type Tab = 'capture' | 'taxonomy';
 
@@ -22,10 +27,75 @@ export function App({ shadowContainer }: AppProps) {
   const { createProject } = useCrannActions();
   const [, setActive] = useCrannState('active');
 
+  const [panelPosition, setPanelPosition] = useCrannState('panelPosition');
+
   const [activeTab, setActiveTab] = useState<Tab>('capture');
   const [newName, setNewName] = useState('');
   const [newDomain, setNewDomain] = useState('');
   const [isSelecting, setIsSelecting] = useState(false);
+
+  // Local position state for the in-flight drag — avoids RPC round-trips
+  // per pointermove. Committed to Crann on pointerup.
+  const [dragPos, setDragPos] = useState<{ top: number; left: number } | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const dragOffset = useRef<{ dx: number; dy: number } | null>(null);
+
+  const clampPosition = useCallback(
+    (top: number, left: number) => {
+      const panelWidth = panelRef.current?.offsetWidth ?? DEFAULT_PANEL_WIDTH;
+      const minLeft = -(panelWidth - CLAMP_HORIZONTAL);
+      const maxLeft = window.innerWidth - CLAMP_HORIZONTAL;
+      const minTop = 0;
+      const maxTop = Math.max(window.innerHeight - CLAMP_VERTICAL, 0);
+      return {
+        left: Math.min(Math.max(left, minLeft), maxLeft),
+        top: Math.min(Math.max(top, minTop), maxTop),
+      };
+    },
+    [],
+  );
+
+  const handleHeaderPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (target.closest('button, select, input')) return;
+    const panel = panelRef.current;
+    if (!panel) return;
+    const rect = panel.getBoundingClientRect();
+    dragOffset.current = { dx: e.clientX - rect.left, dy: e.clientY - rect.top };
+    setDragPos({ top: rect.top, left: rect.left });
+    e.currentTarget.setPointerCapture(e.pointerId);
+  }, []);
+
+  const handleHeaderPointerMove = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!dragOffset.current) return;
+      const top = e.clientY - dragOffset.current.dy;
+      const left = e.clientX - dragOffset.current.dx;
+      setDragPos(clampPosition(top, left));
+    },
+    [clampPosition],
+  );
+
+  const handleHeaderPointerUp = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!dragOffset.current) return;
+      const top = e.clientY - dragOffset.current.dy;
+      const left = e.clientX - dragOffset.current.dx;
+      const final = clampPosition(top, left);
+      dragOffset.current = null;
+      setDragPos(null);
+      setPanelPosition(final);
+      if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      }
+    },
+    [clampPosition, setPanelPosition],
+  );
+
+  const displayPos = dragPos ?? panelPosition;
+  const panelStyle: React.CSSProperties | undefined = displayPos
+    ? { top: displayPos.top, left: displayPos.left, right: 'auto' }
+    : undefined;
 
   // Latches to true on first Crann ready — never resets.
   // Prevents the UI from unmounting during brief reconnections.
@@ -75,8 +145,14 @@ export function App({ shadowContainer }: AppProps) {
   if (!hasProjects) {
     return (
       <ShadowContainerContext.Provider value={shadowContainer}>
-        <div className="fh-panel">
-          <div className="fh-header">
+        <div className="fh-panel" ref={panelRef} style={panelStyle}>
+          <div
+            className="fh-header"
+            onPointerDown={handleHeaderPointerDown}
+            onPointerMove={handleHeaderPointerMove}
+            onPointerUp={handleHeaderPointerUp}
+            onPointerCancel={handleHeaderPointerUp}
+          >
             <div className="fh-header-left">
               <span className="fh-title">Freehold</span>
             </div>
@@ -121,8 +197,14 @@ export function App({ shadowContainer }: AppProps) {
       )}
 
       {!isSelecting && (
-        <div className="fh-panel">
-          <div className="fh-header">
+        <div className="fh-panel" ref={panelRef} style={panelStyle}>
+          <div
+            className="fh-header"
+            onPointerDown={handleHeaderPointerDown}
+            onPointerMove={handleHeaderPointerMove}
+            onPointerUp={handleHeaderPointerUp}
+            onPointerCancel={handleHeaderPointerUp}
+          >
             <div className="fh-header-left">
               <span className="fh-title">Freehold</span>
               <ProjectSelector />
