@@ -1,6 +1,5 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useCrannState, useCrannActions } from '../hooks';
-import { ShadowContainerContext } from '../ShadowContainerContext';
 import { findTaxonomyPath } from '../../taxonomy-path';
 import type { Capture, TaxonomyNode } from '../../types';
 
@@ -12,7 +11,6 @@ export function CategoryPicker({ capture }: Props) {
   const [activeProjectId] = useCrannState('activeProjectId');
   const projects = useCrannState((s) => s.projects);
   const { updateCapture, quickAddTaxonomyAndAssign } = useCrannActions();
-  const shadowContainer = useContext(ShadowContainerContext);
 
   const activeProject = activeProjectId ? projects[activeProjectId] : undefined;
   const taxonomy = activeProject?.taxonomy ?? [];
@@ -36,20 +34,25 @@ export function CategoryPicker({ capture }: Props) {
     setAddingLabel('');
   }, []);
 
-  // Outside-click closes the popover. Listener attached to the shadow host so
-  // it stays scoped to events that bubble through our shadow tree, not the
-  // entire document.
+  // Outside-click closes the popover. Listener attached to the shadow root
+  // (not the host) so composedPath() can see nodes inside the closed shadow:
+  // from a host-level listener, closed-shadow internals are filtered out of
+  // the path and every inside-click would read as "outside".
   useEffect(() => {
-    if (!isOpen || !shadowContainer) return;
-    function handleHostPointerDown(e: Event) {
+    if (!isOpen) return;
+    const popoverNode = popoverRef.current;
+    if (!popoverNode) return;
+    const root = popoverNode.getRootNode();
+    if (!(root instanceof ShadowRoot) && !(root instanceof Document)) return;
+    function handlePointerDown(e: Event) {
       const path = (e as PointerEvent).composedPath();
       if (popoverRef.current && path.includes(popoverRef.current)) return;
       if (triggerRef.current && path.includes(triggerRef.current)) return;
       closePopover();
     }
-    shadowContainer.addEventListener('pointerdown', handleHostPointerDown);
-    return () => shadowContainer.removeEventListener('pointerdown', handleHostPointerDown);
-  }, [isOpen, shadowContainer, closePopover]);
+    root.addEventListener('pointerdown', handlePointerDown);
+    return () => root.removeEventListener('pointerdown', handlePointerDown);
+  }, [isOpen, closePopover]);
 
   function handleSelectNode(nodeId: string | null) {
     updateCapture({ captureId: capture.id, taxonomyNodeId: nodeId });
