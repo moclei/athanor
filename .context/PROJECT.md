@@ -11,7 +11,7 @@ Athanor is a composable browser extension primitives library with an AI assembly
 - `docs/BLOCKS.md` — catalog of all available blocks with usage notes
 - `docs/DECISIONS.md` — opinionated rationale for architectural choices
 - `recipes/` — pre-assembled block combinations for common extension patterns
-- `workspace/` — gitignored; where extensions are incubated locally before graduating to their own repos
+- `workspace/` — gitignored; where extensions are incubated locally before graduating to their own repos. Has its own `CONTEXT.md`; each extension inside (e.g. `workspace/freehold/`) also has one with architecture and file layout details
 - `.context/` — developer workflow docs (this file, PROTOCOL.md, LENSOR_ANALYSIS.md)
 - `initiatives/` — active and historical initiative folders
 
