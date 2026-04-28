@@ -613,7 +613,7 @@ export const panelStyles = /* css */ `
   align-items: center;
   gap: 6px;
   width: 100%;
-  padding: 5px 10px;
+  padding: 5px 10px 5px calc(10px + var(--fh-cat-depth, 0) * 14px);
   font-size: 11px;
   font-weight: 600;
   font-family: inherit;
@@ -646,7 +646,7 @@ export const panelStyles = /* css */ `
 .fh-cat-option {
   display: block;
   width: 100%;
-  padding: 5px 10px 5px 18px;
+  padding: 5px 10px 5px calc(24px + var(--fh-cat-depth, 0) * 14px);
   font-size: 12px;
   font-family: inherit;
   text-align: left;
@@ -667,7 +667,7 @@ export const panelStyles = /* css */ `
 .fh-cat-add-row {
   display: block;
   width: 100%;
-  padding: 5px 10px 5px 18px;
+  padding: 5px 10px 5px calc(24px + var(--fh-cat-depth, 0) * 14px);
   font-size: 11px;
   font-family: inherit;
   text-align: left;
