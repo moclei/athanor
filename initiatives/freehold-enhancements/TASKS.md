@@ -37,14 +37,14 @@
 
 ### Feature 3 — Subfolder export by group
 
-- [ ] In `workspace/freehold/ui/gallery/export-project.ts`: compute `groupSlug` per entry as `slugify(taxonomyPath[0])` or `'uncategorized'` when missing; add it to the `ExportEntry` interface
-- [ ] Replace single `taken: Set<string>` with per-folder collision tracking (`Map<string, Set<string>>` keyed by `groupSlug`); call `pickUniqueFilename` against the per-folder set
-- [ ] Cache subfolder handles in a `Map<string, FileSystemDirectoryHandle>`; resolve via `dirHandle.getDirectoryHandle(groupSlug, { create: true })`
-- [ ] Pass the per-folder handle to `writeBlob` for each capture
-- [ ] Update `metadata.json`: change `exportFilename` field to the relative path (e.g. `properties/property-list.png`); bump `schemaVersion` from `1` to `2`
-- [ ] Keep `metadata.json` itself at the root of the picked directory
-- [ ] Verify build, manual test: export a project, confirm subfolder structure appears, untagged captures land in `uncategorized/`, no filename collisions across groups
-- [ ] Commit: `feat(freehold): export captures into per-group subfolders`
+- [x] In `workspace/freehold/ui/gallery/export-project.ts`: compute `groupSlug` per entry as `slugify(taxonomyPath[0])` or `'uncategorized'` when missing; add it to the `ExportEntry` interface
+- [x] Replace single `taken: Set<string>` with per-folder collision tracking (`Map<string, Set<string>>` keyed by `groupSlug`); call `pickUniqueFilename` against the per-folder set
+- [x] Cache subfolder handles in a `Map<string, FileSystemDirectoryHandle>`; resolve via `dirHandle.getDirectoryHandle(groupSlug, { create: true })`
+- [x] Pass the per-folder handle to `writeBlob` for each capture
+- [x] Update `metadata.json`: change `exportFilename` field to the relative path (e.g. `properties/property-list.png`); bump `schemaVersion` from `1` to `2`
+- [x] Keep `metadata.json` itself at the root of the picked directory
+- [x] Verify build (manual test deferred to user — no browser available in agent session)
+- [x] Commit: `feat(freehold): export captures into per-group subfolders`
 
 ### Feature 1 — Quick-Add taxonomy from CategoryPicker
 
