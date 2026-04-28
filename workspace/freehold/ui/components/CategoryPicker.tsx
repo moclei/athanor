@@ -113,11 +113,12 @@ export function CategoryPicker({ capture }: Props) {
             Uncategorized
           </button>
 
-          {taxonomy.map((group) => (
-            <CategoryGroup
-              key={group.id}
-              group={group}
-              isExpanded={expandedGroups.has(group.id)}
+          {taxonomy.map((node) => (
+            <CategoryNode
+              key={node.id}
+              node={node}
+              depth={0}
+              expandedGroups={expandedGroups}
               addingFor={addingFor}
               addingLabel={addingLabel}
               onToggle={toggleGroup}
@@ -134,9 +135,10 @@ export function CategoryPicker({ capture }: Props) {
   );
 }
 
-interface GroupProps {
-  group: TaxonomyNode;
-  isExpanded: boolean;
+interface NodeProps {
+  node: TaxonomyNode;
+  depth: number;
+  expandedGroups: Set<string>;
   addingFor: string | null;
   addingLabel: string;
   onToggle: (groupId: string) => void;
@@ -147,9 +149,14 @@ interface GroupProps {
   onCancelAdd: () => void;
 }
 
-function CategoryGroup({
-  group,
-  isExpanded,
+// Renders a taxonomy node recursively. A node with children is a collapsible
+// group; a node without children is a selectable leaf tag. "+ Add tag" only
+// appears under top-level groups (depth 0) — deeper additions go via the
+// Taxonomy tab. Indentation is driven by the --fh-cat-depth CSS variable.
+function CategoryNode({
+  node,
+  depth,
+  expandedGroups,
   addingFor,
   addingLabel,
   onToggle,
@@ -158,16 +165,34 @@ function CategoryGroup({
   onChangeAddLabel,
   onCommitAdd,
   onCancelAdd,
-}: GroupProps) {
-  const isAdding = addingFor === group.id;
+}: NodeProps) {
+  const hasChildren = node.children.length > 0;
+  const depthStyle = { '--fh-cat-depth': depth } as React.CSSProperties;
+
+  if (!hasChildren) {
+    return (
+      <button
+        type="button"
+        className="fh-cat-option"
+        style={depthStyle}
+        onClick={() => onSelect(node.id)}
+      >
+        {node.label}
+      </button>
+    );
+  }
+
+  const isExpanded = expandedGroups.has(node.id);
+  const isAdding = addingFor === node.id;
+  const isTopLevel = depth === 0;
 
   return (
-    <div className="fh-cat-group">
+    <div className="fh-cat-group" style={depthStyle}>
       <button
         type="button"
         className="fh-cat-group-header"
         aria-expanded={isExpanded}
-        onClick={() => onToggle(group.id)}
+        onClick={() => onToggle(node.id)}
       >
         <span
           className={`fh-cat-chevron${isExpanded ? ' fh-cat-chevron--open' : ''}`}
@@ -175,47 +200,55 @@ function CategoryGroup({
         >
           ▸
         </span>
-        {group.label}
+        {node.label}
       </button>
       {isExpanded && (
         <>
-          {group.children.map((child) => (
-            <button
+          {node.children.map((child) => (
+            <CategoryNode
               key={child.id}
-              type="button"
-              className="fh-cat-option"
-              onClick={() => onSelect(child.id)}
-            >
-              {child.label}
-            </button>
-          ))}
-          {isAdding ? (
-            <input
-              type="text"
-              className="fh-cat-add-input"
-              autoFocus
-              value={addingLabel}
-              placeholder="New tag…"
-              onChange={(e) => onChangeAddLabel(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  void onCommitAdd(group.id);
-                } else if (e.key === 'Escape') {
-                  e.preventDefault();
-                  onCancelAdd();
-                }
-              }}
-              onBlur={onCancelAdd}
+              node={child}
+              depth={depth + 1}
+              expandedGroups={expandedGroups}
+              addingFor={addingFor}
+              addingLabel={addingLabel}
+              onToggle={onToggle}
+              onSelect={onSelect}
+              onStartAdd={onStartAdd}
+              onChangeAddLabel={onChangeAddLabel}
+              onCommitAdd={onCommitAdd}
+              onCancelAdd={onCancelAdd}
             />
-          ) : (
-            <button
-              type="button"
-              className="fh-cat-add-row"
-              onClick={() => onStartAdd(group.id)}
-            >
-              + Add tag
-            </button>
+          ))}
+          {isTopLevel && (
+            isAdding ? (
+              <input
+                type="text"
+                className="fh-cat-add-input"
+                autoFocus
+                value={addingLabel}
+                placeholder="New tag…"
+                onChange={(e) => onChangeAddLabel(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    void onCommitAdd(node.id);
+                  } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    onCancelAdd();
+                  }
+                }}
+                onBlur={onCancelAdd}
+              />
+            ) : (
+              <button
+                type="button"
+                className="fh-cat-add-row"
+                onClick={() => onStartAdd(node.id)}
+              >
+                + Add tag
+              </button>
+            )
           )}
         </>
       )}
