@@ -123,6 +123,11 @@ Switch the handlers from React `onMouseDown/onMouseMove/onMouseUp` (which only f
 - Explicit toggle button to switch between drag and click-to-place selection modes — adds UI and a state the user has to remember. Implicit hybrid (drag if you drag, two-click if you don't) covers both intents with no surface area.
 - Using a modal for the new `CategoryPicker` — would block the rest of the panel and cause the focus/scroll issues the user is trying to avoid. Inline anchored popover is the right shape.
 
+## Session Notes 2026-04-28
+
+- Outside-click listener for `CategoryPicker` is on the shadow host as planned, but uses `event.composedPath()` for membership checks — the closed shadow root retargets `event.target` to the host as the event escapes, so `popoverRef.current.contains(target)` would always read as outside.
+- `panelPosition` clamp uses `panel.offsetWidth` (with 380px fallback if the ref hasn't mounted yet); `min(window.innerHeight - 40, 0)` guards against a window resize so small the clamp would invert.
+
 ## Open Questions
 
 1. ~~**Feature 3 subfolder granularity.** Confirm the subfolder is the **top-level group** label, not the full taxonomy path.~~ **Resolved**: top-level group only. Captures tagged at any depth resolve to `slugify(taxonomyPath[0])`.

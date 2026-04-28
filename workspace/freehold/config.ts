@@ -64,6 +64,12 @@ export const config = createConfig({
     addTaxonomyNode: {
       handler: async (_ctx, _args: { parentId: string | null; label: string }) => {},
     },
+    quickAddTaxonomyAndAssign: {
+      handler: async (
+        _ctx,
+        _args: { parentId: string; label: string; captureId: string },
+      ) => {},
+    },
     renameTaxonomyNode: {
       handler: async (_ctx, _args: { nodeId: string; label: string }) => {},
     },

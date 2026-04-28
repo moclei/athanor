@@ -275,6 +275,55 @@ export const config = createConfig({
       },
     },
 
+    quickAddTaxonomyAndAssign: {
+      handler: async (
+        ctx,
+        args: { parentId: string; label: string; captureId: string },
+      ) => {
+        const activeProject = ctx.state.projects[ctx.state.activeProjectId!];
+        if (!activeProject) return;
+
+        const parent = findNodeInTree(activeProject.taxonomy, args.parentId);
+        if (!parent) return;
+
+        const newNode: TaxonomyNode = {
+          id: nanoid(),
+          label: args.label,
+          children: [],
+        };
+        const taxonomy = insertNodeInTree(
+          activeProject.taxonomy,
+          args.parentId,
+          newNode,
+          parent.children.length,
+        );
+
+        const captureIdx = activeProject.captures.findIndex(
+          (c: Capture) => c.id === args.captureId,
+        );
+        let captures = activeProject.captures;
+        if (captureIdx !== -1) {
+          const updatedCapture: Capture = {
+            ...activeProject.captures[captureIdx]!,
+            taxonomyNodeId: newNode.id,
+          };
+          captures = [
+            ...activeProject.captures.slice(0, captureIdx),
+            updatedCapture,
+            ...activeProject.captures.slice(captureIdx + 1),
+          ];
+        }
+
+        const updatedProject: ProjectData = {
+          ...activeProject,
+          taxonomy,
+          captures,
+        };
+        const projects = { ...ctx.state.projects, [activeProject.id]: updatedProject };
+        await ctx.setState({ projects });
+      },
+    },
+
     renameTaxonomyNode: {
       handler: async (ctx, args: { nodeId: string; label: string }) => {
         const activeProject = ctx.state.projects[ctx.state.activeProjectId!];

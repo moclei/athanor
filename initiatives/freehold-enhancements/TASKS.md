@@ -48,17 +48,17 @@
 
 ### Feature 1 — Quick-Add taxonomy from CategoryPicker
 
-- [ ] Add new action `quickAddTaxonomyAndAssign` to `workspace/freehold/config.ts` as a stub: `handler: async (_ctx, _args: { parentId: string; label: string; captureId: string }) => {}`
-- [ ] Implement `quickAddTaxonomyAndAssign` in `workspace/freehold/config.sw.ts`: create new TaxonomyNode under `parentId` (append to children), update target capture's `taxonomyNodeId` to the new node's id, write both mutations in a single `setState` call
-- [ ] Replace native `<select>` in `workspace/freehold/ui/components/CategoryPicker.tsx` with a custom popover dropdown component:
+- [x] Add new action `quickAddTaxonomyAndAssign` to `workspace/freehold/config.ts` as a stub: `handler: async (_ctx, _args: { parentId: string; label: string; captureId: string }) => {}`
+- [x] Implement `quickAddTaxonomyAndAssign` in `workspace/freehold/config.sw.ts`: create new TaxonomyNode under `parentId` (append to children), update target capture's `taxonomyNodeId` to the new node's id, write both mutations in a single `setState` call
+- [x] Replace native `<select>` in `workspace/freehold/ui/components/CategoryPicker.tsx` with a custom popover dropdown component:
   - Trigger button shows current selection label or "Uncategorized"
   - Popover lists "Uncategorized" + each top-level group (group label header → child rows clickable → "+ Add tag" row)
   - "+ Add tag" replaces itself with an inline `<input autoFocus />`; Enter calls `quickAddTaxonomyAndAssign({ parentId: group.id, label, captureId })`; Escape or blur cancels
-  - Outside-click closes popover (listener on shadow host, not document)
+  - Outside-click closes popover (listener on shadow host, not document — uses `composedPath()` since the host can't see retargeted shadow events directly)
   - Selecting a child node calls `updateCapture({ taxonomyNodeId })` (existing behaviour)
-- [ ] Add CSS in `workspace/freehold/content-script/panel-styles.ts` for the new popover (`.fh-cat-trigger`, `.fh-cat-popover`, `.fh-cat-group`, `.fh-cat-option`, `.fh-cat-add-row`, `.fh-cat-add-input`); match existing visual language (border-radius 6–7px, font-size 11–12px, neutral grey palette)
-- [ ] Verify build, manual test: existing tag selection still works, "+ Add tag" creates a node visible in the Taxonomy tab, the new node is immediately assigned to the capture, picker closes, list reflects the new tag
-- [ ] Commit: `feat(freehold): quick-add taxonomy tags inline from capture picker`
+- [x] Add CSS in `workspace/freehold/content-script/panel-styles.ts` for the new popover (`.fh-cat-trigger`, `.fh-cat-popover`, `.fh-cat-group`, `.fh-cat-option`, `.fh-cat-add-row`, `.fh-cat-add-input`); match existing visual language (border-radius 6–7px, font-size 11–12px, neutral grey palette)
+- [x] Verify build (manual test deferred to user — no browser available in agent session)
+- [x] Commit: `feat(freehold): quick-add taxonomy tags inline from capture picker`
 
 ### Wrap
 
