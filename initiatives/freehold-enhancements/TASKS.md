@@ -62,8 +62,8 @@
 
 ### Wrap
 
-- [ ] Run final `npm run build` from `workspace/freehold/`; confirm `dist/` rebuilt with no errors
-- [ ] 🔄 Handoff
+- [x] Run final `npm run build` from `workspace/freehold/`; confirm `dist/` rebuilt with no errors
+- [x] 🔄 Handoff
 
 # --- handoff point ---
 
