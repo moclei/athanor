@@ -39,7 +39,6 @@ export function CaptureCard({ capture }: Props) {
 
   return (
     <div className="fh-capture-card">
-      <div className="fh-capture-filename">{capture.filename}</div>
       <div className="fh-capture-url">{extractPathname(capture.url)}</div>
       <CategoryPicker capture={capture} />
       <textarea

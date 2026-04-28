@@ -8,10 +8,10 @@
 
 ### Feature 2 — Hide capture filename
 
-- [ ] Remove the `<div className="fh-capture-filename">{capture.filename}</div>` line from `workspace/freehold/ui/components/CaptureCard.tsx`
-- [ ] Remove the `.fh-capture-filename` CSS rule from `workspace/freehold/content-script/panel-styles.ts`
-- [ ] Verify build passes (`npm run build` in `workspace/freehold/`)
-- [ ] Commit: `feat(freehold): hide auto-generated filename on capture cards`
+- [x] Remove the `<div className="fh-capture-filename">{capture.filename}</div>` line from `workspace/freehold/ui/components/CaptureCard.tsx`
+- [x] Remove the `.fh-capture-filename` CSS rule from `workspace/freehold/content-script/panel-styles.ts`
+- [x] Verify build passes (`npm run build` in `workspace/freehold/`)
+- [x] Commit: `feat(freehold): hide auto-generated filename on capture cards`
 
 ### Feature 4 — Draggable panel
 

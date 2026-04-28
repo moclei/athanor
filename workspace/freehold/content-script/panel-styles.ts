@@ -231,13 +231,6 @@ export const panelStyles = /* css */ `
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
-.fh-capture-filename {
-  font-size: 12px;
-  font-weight: 600;
-  color: #333;
-  word-break: break-all;
-}
-
 .fh-capture-url {
   font-size: 11px;
   color: #888;
