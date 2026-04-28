@@ -26,14 +26,14 @@
 
 ### Feature 5 — Click-to-place selection (alternative to drag)
 
-- [ ] In `workspace/freehold/ui/components/RegionSelectionOverlay.tsx`: replace the `isDragging` ref + boolean drag state with a three-state machine (`'idle' | 'dragging' | 'following'`); see PLAN.md "Feature 5" for the transition table
-- [ ] On `mouseup` while `dragging`: if cursor moved < 5px since `mousedown`, transition to `following` (start position retained, current keeps tracking) instead of cancelling
-- [ ] In `following`: `mousemove` updates `current`; the next `mousedown` commits via `onComplete`
-- [ ] Selection rectangle (`.fh-selection-rect`) renders in both `dragging` and `following` states
-- [ ] Escape continues to cancel from any state
-- [ ] If the final committed rect is < 5px in either dimension (e.g. two clicks in nearly the same spot), call `onCancel` instead of capturing a degenerate region
-- [ ] Verify build, manual test: classic drag still works as before; quick-click → move cursor freely → click again completes; Escape cancels mid-flow
-- [ ] Commit: `feat(freehold): click-to-place region selection alongside drag`
+- [x] In `workspace/freehold/ui/components/RegionSelectionOverlay.tsx`: replace the `isDragging` ref + boolean drag state with a three-state machine (`'idle' | 'dragging' | 'following'`); see PLAN.md "Feature 5" for the transition table
+- [x] On `mouseup` while `dragging`: if cursor moved < 5px since `mousedown`, transition to `following` (start position retained, current keeps tracking) instead of cancelling
+- [x] In `following`: `mousemove` updates `current`; the next `mousedown` commits via `onComplete`
+- [x] Selection rectangle (`.fh-selection-rect`) renders in both `dragging` and `following` states
+- [x] Escape continues to cancel from any state
+- [x] If the final committed rect is < 5px in either dimension (e.g. two clicks in nearly the same spot), call `onCancel` instead of capturing a degenerate region
+- [x] Verify build (manual test deferred to user — no browser available in agent session)
+- [x] Commit: `feat(freehold): click-to-place region selection alongside drag`
 
 ### Feature 3 — Subfolder export by group
 
